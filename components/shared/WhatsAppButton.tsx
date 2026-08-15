@@ -2,8 +2,13 @@
 
 import React from "react";
 
-export function WhatsAppButton() {
-  const phoneNumber = process.env.NEXT_PUBLIC_PHONE || "0212 549 65 73";
+export function WhatsAppButton({ settings }: { settings?: any }) {
+  // If settings are loaded and whatsapp is explicitly disabled, return null
+  if (settings && settings.whatsappEnabled === false) {
+    return null;
+  }
+
+  const phoneNumber = settings?.phone || process.env.NEXT_PUBLIC_PHONE || "0212 549 65 73";
   // Remove all non-digit characters
   let cleanNumber = phoneNumber.replace(/\D/g, "");
   

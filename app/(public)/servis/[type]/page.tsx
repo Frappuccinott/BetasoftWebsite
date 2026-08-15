@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { ChevronRight, Wrench, Settings, Cpu } from "lucide-react";
 import { notFound } from "next/navigation";
+import Image from "next/image";
+import { fetchQuery } from "convex/nextjs";
+import { api } from "@/convex/_generated/api";
 
 const serviceData: Record<string, { title: string; desc: string; icon: any; content: string[] }> = {
   "kurulum": {
@@ -48,6 +51,16 @@ export default async function ServiceDetailPage({
   }
 
   const Icon = data.icon;
+  const settings = await fetchQuery(api.settings.getSettings);
+  
+  let imageUrl = null;
+  if (resolvedParams.type === "kurulum") {
+    imageUrl = settings?.installationImageUrl;
+  } else if (resolvedParams.type === "bakim") {
+    imageUrl = settings?.maintenanceImageUrl;
+  } else if (resolvedParams.type === "otomasyon-cozumleri") {
+    imageUrl = settings?.automationImageUrl;
+  }
 
   return (
     <div className="min-h-screen bg-zinc-50 pb-24">
@@ -80,10 +93,22 @@ export default async function ServiceDetailPage({
           
           <div className="mb-12">
             <div className="w-full aspect-video bg-zinc-100 rounded-xl flex items-center justify-center relative overflow-hidden border border-zinc-200">
-              <div className="absolute inset-0 bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] bg-[size:24px_24px] opacity-50" />
-              <span className="text-zinc-400 font-medium z-10">
-                [Görsel: {data.title}]
-              </span>
+              {imageUrl ? (
+                <Image 
+                  src={imageUrl} 
+                  alt={data.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 800px"
+                  className="object-cover"
+                />
+              ) : (
+                <>
+                  <div className="absolute inset-0 bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] bg-[size:24px_24px] opacity-50" />
+                  <span className="text-zinc-400 font-medium z-10">
+                    [Görsel: {data.title}]
+                  </span>
+                </>
+              )}
             </div>
           </div>
 

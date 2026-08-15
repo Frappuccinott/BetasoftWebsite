@@ -1,7 +1,20 @@
 import Link from "next/link";
 import { ChevronRight, Target, Eye, ShieldCheck, Zap } from "lucide-react";
+import Image from "next/image";
+import ReactMarkdown from "react-markdown";
+import { fetchQuery } from "convex/nextjs";
+import { api } from "@/convex/_generated/api";
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  let settings;
+  try {
+    settings = await fetchQuery(api.settings.getSettings);
+  } catch (e) {
+    console.error("Convex fetch failed:", e);
+  }
+
+  const yearsOfExperience = settings?.yearsOfExperience || 15;
+
   return (
     <div className="min-h-screen bg-zinc-50 pb-24">
       {/* Hero Section */}
@@ -30,31 +43,51 @@ export default function AboutPage() {
           <div className="flex-1 space-y-6">
             <h2 className="text-3xl font-bold text-zinc-900">Biz Kimiz?</h2>
             <div className="w-16 h-1 bg-primary rounded-full" />
-            <p className="text-zinc-600 leading-relaxed text-lg">
-              Yılların getirdiği endüstriyel tecrübe ile kurulan <strong className="text-zinc-900">Betasoft</strong>, 
-              makine üreticilerinden (OEM) son kullanıcılara kadar geniş bir yelpazede anahtar teslim otomasyon sistemleri 
-              tasarlayan, geliştiren ve uygulayan öncü bir teknoloji firmasıdır. 
-            </p>
-            <p className="text-zinc-600 leading-relaxed text-lg">
-              Ambalajdan gıdaya, plastikten robotiğe kadar her sektörün dinamiklerini anlıyor, 
-              ihtiyaca özel donanım ve yazılım çözümleri üretiyoruz. Siemens, Inovance, Omron gibi 
-              dünya devleriyle yaptığımız iş ortaklıkları sayesinde, en güvenilir komponentleri projelerimize entegre ediyoruz.
-            </p>
+            {settings?.aboutText ? (
+              <div className="prose prose-lg text-zinc-600 leading-relaxed marker:text-primary">
+                <ReactMarkdown>{settings.aboutText}</ReactMarkdown>
+              </div>
+            ) : (
+              <>
+                <p className="text-zinc-600 leading-relaxed text-lg">
+                  Yılların getirdiği endüstriyel tecrübe ile kurulan <strong className="text-zinc-900">Betasoft</strong>, 
+                  makine üreticilerinden (OEM) son kullanıcılara kadar geniş bir yelpazede anahtar teslim otomasyon sistemleri 
+                  tasarlayan, geliştiren ve uygulayan öncü bir teknoloji firmasıdır. 
+                </p>
+                <p className="text-zinc-600 leading-relaxed text-lg">
+                  Ambalajdan gıdaya, plastikten robotiğe kadar her sektörün dinamiklerini anlıyor, 
+                  ihtiyaca özel donanım ve yazılım çözümleri üretiyoruz. Siemens, Inovance, Omron gibi 
+                  dünya devleriyle yaptığımız iş ortaklıkları sayesinde, en güvenilir komponentleri projelerimize entegre ediyoruz.
+                </p>
+              </>
+            )}
           </div>
           
           <div className="flex-1 w-full relative">
             <div className="aspect-[4/3] rounded-2xl bg-zinc-100 border border-zinc-200 overflow-hidden relative shadow-inner">
-              <div className="absolute inset-0 bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] bg-[size:20px_20px] opacity-50" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-zinc-400 font-medium tracking-widest uppercase">
-                  [Kurumsal Görsel]
-                </span>
-              </div>
+              {settings?.aboutImageUrl ? (
+                <Image 
+                  src={settings.aboutImageUrl} 
+                  alt="Hakkımızda"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
+                />
+              ) : (
+                <>
+                  <div className="absolute inset-0 bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] bg-[size:20px_20px] opacity-50" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-zinc-400 font-medium tracking-widest uppercase">
+                      [Kurumsal Görsel]
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
             
             {/* Floating Badge */}
-            <div className="absolute -bottom-6 -left-6 bg-zinc-900 text-white p-6 rounded-2xl shadow-xl hidden md:block">
-              <div className="text-4xl font-black text-primary mb-1">15+</div>
+            <div className="absolute -bottom-6 -left-6 bg-zinc-900 text-white p-6 rounded-2xl shadow-xl hidden md:block z-10">
+              <div className="text-4xl font-black text-primary mb-1">{yearsOfExperience}+</div>
               <div className="text-sm font-medium text-zinc-300">Yıllık Tecrübe</div>
             </div>
           </div>

@@ -18,7 +18,10 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/s
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 
-const sectoralSolutions = [
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+const staticSectoralSolutions = [
   { id: "ambalaj", title: "Ambalaj ve Paketleme Makineleri", items: ["Dilimleme Makineleri", "Kağıt Kesme Makineleri", "Kese Kağıdı Makineleri", "Torba Çanta Yapım Makineleri", "Kutu Katlama Makineleri", "Gıda Paketleme Makineleri", "Gıda Dolum Makineleri"] },
   { id: "gida", title: "Gıda İşleme Makineleri", items: ["Paketleme Makineleri", "Dolum Makineleri"] },
   { id: "plastik", title: "Plastik ve Kauçuk İşleme Makineleri", items: ["Termoform Makineleri"] },
@@ -38,10 +41,24 @@ const productCategories = [
   { id: "uzak-erisim", name: "Uzak Erişim Cihazı", brands: [] },
 ];
 
-export function Navbar() {
-  const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Betasoft";
+export function Navbar({ settings }: { settings?: any }) {
+  const siteName = settings?.siteName || process.env.NEXT_PUBLIC_SITE_NAME || "Betasoft";
+  const phone = settings?.phone || process.env.NEXT_PUBLIC_PHONE || "0212 549 03 75";
   const router = useRouter();
   const [isOpen, setIsOpen] = React.useState(false);
+
+  const categories = useQuery(api.categories.getCategories);
+  const machines = useQuery(api.machines.getMachines);
+
+  // Veritabanından gelen kategoriler ve makineleri eşleştiriyoruz
+  const sectoralSolutions = categories && machines ? categories.map(cat => ({
+    id: cat.slug,
+    title: cat.name,
+    items: machines.filter(m => m.categoryId === cat._id).map(m => ({
+      name: m.name,
+      slug: m.slug
+    }))
+  })) : [];
 
   return (
     <div className="w-full border-b bg-white relative z-50">
@@ -68,7 +85,7 @@ export function Navbar() {
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className="grid w-[320px] gap-1 p-2">
-                    {sectoralSolutions.map((solution) => (
+                    {sectoralSolutions.length > 0 ? sectoralSolutions.map((solution) => (
                       <li key={solution.id} className="group/item relative">
                         <Link
                           href={`/cozumler/${solution.id}`}
@@ -82,21 +99,19 @@ export function Navbar() {
 
                         {solution.items.length > 0 && (
                           <ul className="absolute left-full top-0 hidden w-[250px] bg-white rounded-lg shadow-lg border group-hover/item:block ml-1 p-2 space-y-1 z-50">
-                            {solution.items.map((item) => {
-                              // Generate a simple slug for the item
-                              const itemSlug = item.toLowerCase().replace(/ /g, "-").replace(/ı/g, "i").replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c");
-                              return (
-                                <ListItem
-                                  key={item}
-                                  href={`/cozumler/${solution.id}/${itemSlug}`}
-                                  title={item}
-                                />
-                              );
-                            })}
+                            {solution.items.map((item) => (
+                              <ListItem
+                                key={item.slug}
+                                href={`/cozumler/${solution.id}/${item.slug}`}
+                                title={item.name}
+                              />
+                            ))}
                           </ul>
                         )}
                       </li>
-                    ))}
+                    )) : (
+                      <li className="p-3 text-sm text-zinc-500 text-center">Kategoriler Yükleniyor...</li>
+                    )}
                   </ul>
                 </NavigationMenuContent>
               </NavigationMenuItem>
@@ -180,15 +195,14 @@ export function Navbar() {
                           <div className="font-bold text-zinc-900 mb-2 uppercase text-xs">{sol.title}</div>
                           <div className="flex flex-col space-y-2 pl-2">
                             {sol.items.map(item => {
-                              const itemSlug = item.toLowerCase().replace(/ /g, "-").replace(/ı/g, "i").replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c");
                               return (
                                 <Link 
-                                  key={item} 
-                                  href={`/cozumler/${sol.id}/${itemSlug}`}
+                                  key={item.slug} 
+                                  href={`/cozumler/${sol.id}/${item.slug}`}
                                   onClick={() => setIsOpen(false)}
                                   className="text-zinc-600 hover:text-primary transition-colors text-sm"
                                 >
-                                  {item}
+                                  {item.name}
                                 </Link>
                               );
                             })}
@@ -235,7 +249,7 @@ export function Navbar() {
                 </Accordion>
 
                 <div className="px-6 mt-8">
-                  <p className="text-sm text-zinc-500">Müşteri Hizmetleri: 0212 549 03 75</p>
+                  <p className="text-sm text-zinc-500">Müşteri Hizmetleri: {phone}</p>
                 </div>
 
               </div>

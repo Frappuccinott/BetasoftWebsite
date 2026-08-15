@@ -3,16 +3,52 @@ import { ServicesSection } from "@/components/shared/home/ServicesSection";
 import { LatestArticlesSection } from "@/components/shared/home/LatestArticlesSection";
 import { PartnersSection } from "@/components/shared/home/PartnersSection";
 import { WhatsAppButton } from "@/components/shared/WhatsAppButton";
+import { fetchQuery } from "convex/nextjs";
+import { api } from "@/convex/_generated/api";
 
-export default function HomePage() {
+export default async function HomePage() {
+  let settings;
+  try {
+    settings = await fetchQuery(api.settings.getSettings);
+  } catch (e) {
+    console.error("Convex fetch failed:", e);
+  }
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": settings?.siteName || "Betasoft",
+    "url": process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+    "logo": `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/logo.png`,
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": settings?.phone || "",
+      "contactType": "customer service"
+    },
+    "sameAs": [
+      settings?.instagram || "",
+      settings?.youtube || "",
+      settings?.linkedin || ""
+    ].filter(Boolean)
+  };
+
   return (
     <div className="flex flex-col w-full min-h-screen relative">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <HeroSection />
-      <ServicesSection />
+      <ServicesSection 
+        servicesImageUrl={settings?.servicesImageUrl} 
+        worksImageUrl={settings?.worksImageUrl} 
+      />
       <LatestArticlesSection />
-      <PartnersSection />
+      <PartnersSection 
+        partnersImageUrls={settings?.partnersImageUrls} 
+      />
       
-      <WhatsAppButton />
+      <WhatsAppButton settings={settings} />
     </div>
   );
 }

@@ -1,8 +1,8 @@
 import { Phone, Mail } from "lucide-react";
 
-export function Topbar() {
-  const phone = process.env.NEXT_PUBLIC_PHONE || "0212 549 65 73";
-  const email = process.env.NEXT_PUBLIC_EMAIL || "info@betasoft.com";
+export function Topbar({ settings }: { settings?: any }) {
+  const phone = settings?.phone || process.env.NEXT_PUBLIC_PHONE || "0212 549 65 73";
+  const email = settings?.email || process.env.NEXT_PUBLIC_EMAIL || "info@betasoft.com";
 
   return (
     <div className="bg-primary text-white text-sm py-2 px-4 flex justify-end items-center gap-6">

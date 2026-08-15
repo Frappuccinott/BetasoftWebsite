@@ -1,32 +1,35 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight, Calendar } from "lucide-react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
-// Fake data for now, will be replaced with API fetch later
-const fakeArticles = [
-  {
-    id: 1,
-    title: "Endüstri 4.0 ve Otomasyonun Geleceği",
-    excerpt: "Üretim hatlarında nesnelerin interneti (IoT) ve akıllı sistemlerin kullanımı ile verimlilik nasıl artırılır?",
-    date: "12 Ağustos 2026",
-    slug: "endustri-4-0-ve-otomasyon",
-  },
-  {
-    id: 2,
-    title: "Yeni Nesil Servo Motor Teknolojileri",
-    excerpt: "Hassas konumlandırma ve yüksek hız gerektiren uygulamalarda yeni nesil servo motorların sağladığı avantajlar.",
-    date: "5 Ağustos 2026",
-    slug: "yeni-nesil-servo-motor-teknolojileri",
-  },
-  {
-    id: 3,
-    title: "Plastik Sektöründe Enerji Tasarrufu",
-    excerpt: "Extruder ve enjeksiyon makinelerinde doğru otomasyon çözümleriyle %30'a varan enerji tasarrufu nasıl sağlanır?",
-    date: "28 Temmuz 2026",
-    slug: "plastik-sektorunde-enerji-tasarrufu",
-  },
-];
+const stripHtml = (html: string) => {
+  return html.replace(/<[^>]*>?/gm, '');
+};
+
+const formatDate = (timestamp: number) => {
+  return new Intl.DateTimeFormat("tr-TR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(new Date(timestamp));
+};
 
 export function LatestArticlesSection() {
+  const articles = useQuery(api.articles.getActiveArticles);
+
+  if (articles === undefined) {
+    return null; // Loading state (could be skeleton)
+  }
+
+  if (articles.length === 0) {
+    return null;
+  }
+
+  const latestArticles = articles.slice(0, 3);
+
   return (
     <section className="py-24 bg-zinc-50">
       <div className="container mx-auto px-4">
@@ -46,31 +49,37 @@ export function LatestArticlesSection() {
 
         {/* Articles Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {fakeArticles.map((article) => (
+          {latestArticles.map((article) => (
             <div 
-              key={article.id} 
+              key={article._id} 
               className="bg-white rounded-xl shadow-sm border border-zinc-100 overflow-hidden hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-out group cursor-pointer flex flex-col h-full"
             >
-              {/* Image Placeholder */}
+              {/* Image Placeholder or Real Image */}
               <div className="w-full h-48 bg-zinc-900 relative overflow-hidden">
-                {/* A subtle grid pattern so the zoom effect is visible even when there's no real image */}
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,#3f3f3f2e_1px,transparent_1px),linear-gradient(to_bottom,#3f3f3f2e_1px,transparent_1px)] bg-[size:14px_24px] transition-transform duration-700 ease-out group-hover:scale-110" />
-                <div className="absolute inset-0 flex items-center justify-center text-zinc-500 text-sm font-medium">
-                  [Görsel Alanı]
-                </div>
+                {article.imageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110" />
+                ) : (
+                  <>
+                    <div className="absolute inset-0 bg-[linear-gradient(to_right,#3f3f3f2e_1px,transparent_1px),linear-gradient(to_bottom,#3f3f3f2e_1px,transparent_1px)] bg-[size:14px_24px] transition-transform duration-700 ease-out group-hover:scale-110" />
+                    <div className="absolute inset-0 flex items-center justify-center text-zinc-500 text-sm font-medium">
+                      [Görsel Bulunamadı]
+                    </div>
+                  </>
+                )}
               </div>
               
               {/* Content */}
               <div className="p-6 flex flex-col flex-grow">
                 <div className="flex items-center gap-2 text-xs text-zinc-500 mb-3">
                   <Calendar className="w-3.5 h-3.5" />
-                  <span>{article.date}</span>
+                  <span>{formatDate(article._creationTime)}</span>
                 </div>
                 <h3 className="text-lg font-bold text-zinc-900 mb-3 group-hover:text-primary transition-colors line-clamp-2">
                   {article.title}
                 </h3>
                 <p className="text-sm text-zinc-600 line-clamp-3 mb-6 flex-grow">
-                  {article.excerpt}
+                  {stripHtml(article.content)}
                 </p>
                 
                 <div className="mt-auto pt-4 border-t border-zinc-100">

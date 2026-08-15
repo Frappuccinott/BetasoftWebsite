@@ -65,6 +65,7 @@ export function PhotoGallery({ items }: { items: GalleryItem[] }) {
                 src={item.coverImage} 
                 alt={item.title} 
                 fill 
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 className="object-cover"
               />
             ) : (
@@ -128,6 +129,7 @@ export function PhotoGallery({ items }: { items: GalleryItem[] }) {
                 src={currentPhotos[currentPhotoIndex]} 
                 alt={`${selectedProject.title} - Fotoğraf ${currentPhotoIndex + 1}`} 
                 fill 
+                sizes="(max-width: 1024px) 100vw, 1024px"
                 className="object-contain"
               />
             ) : (

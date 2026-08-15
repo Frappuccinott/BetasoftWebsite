@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 const sliderImages = [
   {
@@ -23,28 +25,37 @@ const sliderImages = [
 ];
 
 export function HeroSection() {
+  const settings = useQuery(api.settings.getSettings);
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  // Use dynamic images from settings if available, otherwise fallback to default
+  const dynamicImages = settings?.slideImageUrls && settings.slideImageUrls.length > 0 
+    ? settings.slideImageUrls.map((url, idx) => ({ id: idx, url, alt: `Slide ${idx + 1}` }))
+    : sliderImages;
+
   useEffect(() => {
+    if (dynamicImages.length === 0) return;
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % sliderImages.length);
+      setCurrentSlide((prev) => (prev + 1) % dynamicImages.length);
     }, 5000); // 5 seconds autoplay
 
     return () => clearInterval(timer);
-  }, []);
+  }, [dynamicImages.length]);
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % sliderImages.length);
+    setCurrentSlide((prev) => (prev + 1) % dynamicImages.length);
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + sliderImages.length) % sliderImages.length);
+    setCurrentSlide((prev) => (prev - 1 + dynamicImages.length) % dynamicImages.length);
   };
+
+  if (dynamicImages.length === 0) return null;
 
   return (
     <section className="relative w-full h-[600px] flex items-center bg-zinc-900 overflow-hidden group">
       {/* Background Slider */}
-      {sliderImages.map((slide, index) => (
+      {dynamicImages.map((slide, index) => (
         <div 
           key={slide.id}
           className={`absolute inset-0 transition-opacity duration-1000 ease-in-out z-0 ${index === currentSlide ? 'opacity-100' : 'opacity-0'}`}
@@ -82,7 +93,7 @@ export function HeroSection() {
       
       {/* Indicators */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
-        {sliderImages.map((_, index) => (
+        {dynamicImages.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}

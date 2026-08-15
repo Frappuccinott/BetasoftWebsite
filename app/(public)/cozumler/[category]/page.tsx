@@ -1,17 +1,40 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { fetchQuery } from "convex/nextjs";
+import { api } from "@/convex/_generated/api";
+import { notFound } from "next/navigation";
 
-// Fake data for the template
-const categoryData = {
-  ambalaj: { title: "Ambalaj ve Paketleme Makineleri", items: ["Dilimleme Makineleri", "Kağıt Kesme Makineleri", "Kese Kağıdı Makineleri", "Torba Çanta Yapım Makineleri", "Kutu Katlama Makineleri", "Gıda Paketleme Makineleri", "Gıda Dolum Makineleri"] },
-  gida: { title: "Gıda İşleme Makineleri", items: ["Paketleme Makineleri", "Dolum Makineleri"] },
-  plastik: { title: "Plastik ve Kauçuk İşleme Makineleri", items: ["Termoform Makineleri"] },
-  "geri-donusum": { title: "Geri Dönüşüm Makineleri", items: ["Extruder Geri Dönüşüm Makineleri", "Dozajlama Makineleri", "Shredder", "Yıkama Hatları"] },
-  robotik: { title: "Robotik ve Otomasyon", items: ["Robotik Kollar", "Müşteriye Özel Pano Tasarımı"] },
-  tekstil: { title: "Tekstil Makineleri", items: ["Dokuma Makineleri", "İplik Makineleri", "Boyama Makineleri"] },
-  hvac: { title: "Temizleme / Sterilizasyon / HVAC", items: ["Klima Sistemleri", "Soğutma Sistemleri", "Fanlar"] },
-  lojistik: { title: "Lojistik ve Depolama Sistemleri", items: ["Konveyör Sistemleri", "Taşıma Bantları"] },
-};
+import type { Metadata, ResolvingMetadata } from "next";
+
+export async function generateMetadata(
+  { params }: { params: Promise<{ category: string }> },
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const resolvedParams = await params;
+  const category = await fetchQuery(api.categories.getCategoryBySlug, { slug: resolvedParams.category });
+  
+  let settings;
+  try {
+    settings = await fetchQuery(api.settings.getSettings);
+  } catch (e) {}
+
+  if (!category) return { title: "Kategori Bulunamadı" };
+
+  const title = category.metaTitle || `${category.name} Makineleri`;
+  const description = category.metaDescription || `Üretim süreçlerinizi hızlandıran, verimliliği artıran ve tamamen ihtiyaçlarınıza yönelik olarak tasarlanan ${category.name.toLowerCase()} çözümlerimiz.`;
+  const siteName = settings?.metaTitle || settings?.siteName || "Betasoft";
+
+  return {
+    title,
+    description,
+    keywords: category.keywords ? category.keywords.split(',').map((k: string) => k.trim()) : undefined,
+    openGraph: {
+      title: `${title} | ${siteName}`,
+      description,
+      images: category.imageUrl ? [{ url: category.imageUrl }] : [],
+    },
+  };
+}
 
 export default async function SolutionCategoryPage({
   params,
@@ -19,8 +42,16 @@ export default async function SolutionCategoryPage({
   params: Promise<{ category: string }>;
 }) {
   const resolvedParams = await params;
-  const categoryKey = resolvedParams.category as keyof typeof categoryData;
-  const categoryInfo = categoryData[categoryKey] || { title: resolvedParams.category.toUpperCase(), items: [] };
+  
+  // Kategori bilgilerini getir
+  const category = await fetchQuery(api.categories.getCategoryBySlug, { slug: resolvedParams.category });
+  
+  if (!category) {
+    notFound();
+  }
+
+  // Kategoriye ait makineleri getir
+  const machines = await fetchQuery(api.machines.getMachinesByCategory, { categoryId: category._id });
 
   return (
     <div className="min-h-screen bg-zinc-50 pb-24">
@@ -34,15 +65,15 @@ export default async function SolutionCategoryPage({
               <ChevronRight className="w-4 h-4" />
               <Link href="/cozumler" className="hover:text-primary transition-colors">Sektörel Çözümler</Link>
               <ChevronRight className="w-4 h-4" />
-              <span className="text-zinc-900 font-medium">{categoryInfo.title}</span>
+              <span className="text-zinc-900 font-medium">{category.name}</span>
             </div>
 
             <h1 className="text-3xl md:text-5xl font-bold text-zinc-900 mb-6 text-center">
-              {categoryInfo.title}
+              {category.name}
             </h1>
             <div className="w-full max-w-4xl border-t border-zinc-200 pt-6">
               <p className="text-zinc-600 text-center text-lg">
-                Üretim süreçlerinizi hızlandıran, verimliliği artıran ve tamamen ihtiyaçlarınıza yönelik olarak tasarlanan {categoryInfo.title.toLowerCase()} çözümlerimiz.
+                Üretim süreçlerinizi hızlandıran, verimliliği artıran ve tamamen ihtiyaçlarınıza yönelik olarak tasarlanan {category.name.toLowerCase()} çözümlerimiz.
               </p>
             </div>
             <div className="w-12 h-1 bg-zinc-200 mt-6 rounded-full" />
@@ -53,24 +84,24 @@ export default async function SolutionCategoryPage({
       {/* Machines Grid */}
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {categoryInfo.items.map((item) => {
-            const itemSlug = item.toLowerCase().replace(/ /g, "-").replace(/ı/g, "i").replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c");
-
+          {machines.map((machine) => {
             return (
-              <div key={item} className="flex flex-col items-center group">
+              <div key={machine._id} className="flex flex-col items-center group">
                 <div className="w-full h-48 bg-white border border-zinc-200 rounded-xl mb-6 flex items-center justify-center overflow-hidden relative shadow-sm group-hover:shadow-md transition-shadow">
-                  <div className="absolute inset-0 bg-[linear-gradient(to_right,#f4f4f5_1px,transparent_1px),linear-gradient(to_bottom,#f4f4f5_1px,transparent_1px)] bg-[size:24px_24px]" />
-                  <span className="text-zinc-400 font-medium z-10 text-sm">
-                    [Görsel: {item}]
-                  </span>
+                  {machine.imageUrls && machine.imageUrls.length > 0 ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={machine.imageUrls[0]} alt={machine.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="absolute inset-0 bg-[linear-gradient(to_right,#f4f4f5_1px,transparent_1px),linear-gradient(to_bottom,#f4f4f5_1px,transparent_1px)] bg-[size:24px_24px]" />
+                  )}
                 </div>
 
                 <h3 className="text-lg font-bold text-zinc-700 mb-6 text-center tracking-wider h-10 flex items-center">
-                  {item}
+                  {machine.name}
                 </h3>
 
                 <Link
-                  href={`/cozumler/${resolvedParams.category}/${itemSlug}`}
+                  href={`/cozumler/${category.slug}/${machine.slug}`}
                   className="bg-primary text-white font-semibold px-6 py-2.5 rounded-md hover:bg-primary/90 transition-colors inline-block w-3/4 text-center shadow-sm"
                 >
                   Detayları İncele
@@ -78,6 +109,11 @@ export default async function SolutionCategoryPage({
               </div>
             );
           })}
+          {machines.length === 0 && (
+            <div className="col-span-full text-center py-12 text-zinc-500">
+              Bu kategoriye henüz bir makine eklenmemiş.
+            </div>
+          )}
         </div>
       </div>
     </div>

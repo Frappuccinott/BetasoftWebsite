@@ -1,13 +1,22 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
-export function ServicesSection() {
+export function ServicesSection({ 
+  servicesImageUrl, 
+  worksImageUrl 
+}: { 
+  servicesImageUrl?: string; 
+  worksImageUrl?: string; 
+}) {
   return (
     <section className="w-full flex flex-col md:flex-row h-[400px] md:h-[500px]">
       {/* Hizmetlerimiz Block */}
       <Link href="/cozumler" className="relative flex-1 group overflow-hidden cursor-pointer border-b md:border-b-0 md:border-r border-zinc-800 bg-zinc-900 block">
         {/* Image Placeholder with Zoom Effect */}
-        <div className="absolute inset-0 bg-zinc-800 transition-transform duration-700 ease-in-out group-hover:scale-110" />
+        <div 
+          className="absolute inset-0 bg-zinc-800 transition-transform duration-700 ease-in-out group-hover:scale-110 bg-cover bg-center" 
+          style={servicesImageUrl ? { backgroundImage: `url(${servicesImageUrl})` } : {}}
+        />
         
         {/* Gray Overlay that disappears on hover */}
         <div className="absolute inset-0 bg-zinc-600/80 mix-blend-multiply transition-opacity duration-500 ease-in-out group-hover:opacity-0" />
@@ -28,7 +37,10 @@ export function ServicesSection() {
       {/* Çalışmalarımız Block */}
       <Link href="/fotograf-galerisi" className="relative flex-1 group overflow-hidden cursor-pointer bg-zinc-900 block">
         {/* Image Placeholder with Zoom Effect */}
-        <div className="absolute inset-0 bg-zinc-800 transition-transform duration-700 ease-in-out group-hover:scale-110" />
+        <div 
+          className="absolute inset-0 bg-zinc-800 transition-transform duration-700 ease-in-out group-hover:scale-110 bg-cover bg-center" 
+          style={worksImageUrl ? { backgroundImage: `url(${worksImageUrl})` } : {}}
+        />
         
         {/* Gray Overlay that disappears on hover */}
         <div className="absolute inset-0 bg-zinc-600/80 mix-blend-multiply transition-opacity duration-500 ease-in-out group-hover:opacity-0" />

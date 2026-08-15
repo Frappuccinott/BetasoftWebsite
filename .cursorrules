@@ -9,9 +9,9 @@ The project includes a public-facing website and a secure Admin Dashboard for ma
 - Styling: Tailwind CSS
 - UI Components: Shadcn UI (Radix UI) & Lucide Icons
 - Animations: Framer Motion (Keep it subtle and professional)
-- Database: Vercel Postgres via Prisma ORM
+- Database & Backend API: Convex (Serverless, Real-time)
+- Storage: Cloudflare R2 (via AWS S3 SDK / Pre-signed URLs)
 - Authentication: NextAuth.js (Auth.js) v5
-- Storage: Vercel Blob
 - Editor: TipTap (Rich Text Editor for articles)
 
 # Architecture & File Structure
@@ -22,41 +22,51 @@ The project includes a public-facing website and a secure Admin Dashboard for ma
   - `/components/ui`: Shadcn UI components.
   - `/components/shared`: Reusable components (Navbar, Footer).
   - `/components/admin`: Dashboard specific components.
-  - `/lib`: Utility functions, Prisma client, and NextAuth config.
-  - `/actions`: Next.js Server Actions for data mutations.
+  - `/convex`: Convex backend functions (queries, mutations, schema.ts).
+  - `/lib`: Utility functions, NextAuth config, and Cloudflare R2 S3 client instances.
+  - `/actions`: Next.js Server Actions (strictly for generating R2 pre-signed URLs or NextAuth logic).
 
 # Development Rules & Best Practices
 
 ## 1. Next.js & React
-- Prefer React Server Components (RSC) by default.
-- Use `use client` ONLY when absolutely necessary (e.g., hooks, event listeners, interactive Shadcn components, rich text editor).
-- Optimize images using `next/image` with proper `alt` tags for SEO.
-- Use `next/link` for all internal navigation.
+- Prefer React Server Components (RSC) by default for public pages for SEO.
+- Use `use client` when utilizing Convex hooks (`useQuery`, `useMutation`), interactive Shadcn components, or the TipTap rich text editor.
+- Optimize images using `next/image` with proper `alt` tags for SEO. Configure remote patterns in `next.config.js` for the Cloudflare R2 public URL.
 - Implement loading states (`loading.tsx`) and error boundaries (`error.tsx`).
 
-## 2. TypeScript
-- Strictly type all props, state, and API responses.
-- Avoid using `any`. Use `unknown` if the type is truly dynamic.
-- Export interfaces/types from a central `/types` directory if reused across multiple files.
+## 2. TypeScript & Validation
+- Strictly type all props and state.
+- Rely on Convex's generated types (`Doc<"tableName">`, `Id<"tableName">`) for database entities instead of defining manual interfaces for DB records.
+- Use `zod` for frontend form validation (react-hook-form).
+- Use Convex's built-in `v` validator (from `convex/values`) for strictly typing and validating arguments in all Convex queries and mutations.
 
 ## 3. Styling & UI (Tailwind & Shadcn)
-- Use Shadcn UI for all standard components (Buttons, Cards, Tables, Forms, Dialogs).
-- Maintain an industrial color palette: Primary Blue/Navy (`slate-900`, `blue-700`), clean whites/greys for backgrounds, and subtle accent colors (Teal/Orange) for Call-to-Action buttons.
-- Ensure fully responsive design using Tailwind's mobile-first breakpoints (`sm:`, `md:`, `lg:`, `xl:`).
-- Keep UI animations (Framer Motion) minimal, smooth, and professional. Avoid bouncy or playful effects.
+- Use Shadcn UI for all standard components.
+- Maintain an industrial color palette: Primary Blue/Navy (`slate-900`, `blue-700`), clean whites/greys, and subtle Call-to-Action accents.
+- Ensure fully responsive design using mobile-first breakpoints.
+- Keep UI animations (Framer Motion) minimal, smooth, and professional.
 
-## 4. Backend & Data Fetching (Vercel Ecosystem)
-- Use Server Actions (`/actions`) for all form submissions and database mutations (Create, Update, Delete). Do not create manual API routes (`/api`) unless required for webhooks or external integrations.
-- Validate incoming data in Server Actions using `zod`.
-- Use Prisma for all database queries. Keep queries optimized and handle relational data carefully (e.g., Categories -> Products).
-- For data fetching, fetch directly in Server Components and pass data down as props.
+## 4. Backend & Data Fetching (Convex)
+- Do NOT use Prisma. All database operations must go through Convex.
+- Define the database schema strictly in `convex/schema.ts`.
+- Write isolated, pure backend functions in the `/convex` directory (`query`, `mutation`, `internalQuery`).
+- For Client Components: Fetch data using `useQuery` and mutate using `useMutation` from `convex/react`.
+- For Server Components: Fetch data using `fetchQuery` from `convex/nextjs`.
 
-## 5. Security & Authentication
+## 5. File Uploads (Cloudflare R2)
+- Do NOT send files directly through Convex mutations.
+- Implement a Direct-to-R2 upload flow:
+  1. The client requests a Pre-signed Upload URL via a Next.js Server Action (using AWS S3 SDK pointing to Cloudflare R2).
+  2. The client uploads the file directly to Cloudflare R2 using the provided URL via a `PUT` request.
+  3. Upon successful upload, the client extracts the public R2 URL and saves it to the Convex database via a Convex `mutation`.
+
+## 6. Security & Authentication
 - Protect the `/dashboard` route group using Next.js Middleware and NextAuth session checks.
-- Verify user roles (e.g., `role === 'ADMIN'`) before executing any Server Action related to database mutations.
-- Ensure all uploaded files to Vercel Blob are validated (check file size and mime types, allow only images and PDFs).
+- Verify user roles (e.g., `role === 'ADMIN'`) in Server Components and Layouts before rendering the dashboard.
+- Pass authentication state or admin status securely to Convex mutations if restricting data writes.
+- Validate file sizes and mime types (only images and PDFs) BEFORE generating an R2 pre-signed URL.
 
-## 6. Code Output Requirements
+## 7. Code Output Requirements
 - Provide complete, functional code blocks without omitting essential parts (No `// ... rest of the code` comments).
 - Write clean, self-documenting code with concise comments explaining complex logic.
-- Always check for imports and ensure components from Shadcn UI are correctly referenced.
+- Always check for imports and ensure components from Shadcn UI, Convex (`convex/react`, `../convex/_generated/api`), and NextAuth are correctly referenced.

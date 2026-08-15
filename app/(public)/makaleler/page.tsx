@@ -1,46 +1,32 @@
 import Link from "next/link";
 import { ChevronRight, Calendar, User, ArrowRight } from "lucide-react";
+import { fetchQuery } from "convex/nextjs";
+import { api } from "@/convex/_generated/api";
 
-const articlesData = [
-  {
-    id: 1,
-    title: "Endüstri 4.0 ve Otomasyonun Geleceği",
-    slug: "endustri-4-0-ve-otomasyonun-gelecegi",
-    excerpt: "Üretim hatlarında yapay zeka ve IoT entegrasyonu ile Endüstri 4.0'ın getirdiği yenilikler ve verimlilik artışları hakkında her şey.",
-    date: "12 Ağustos 2026",
-    author: "Ahmet Yılmaz",
-    category: "Teknoloji",
-  },
-  {
-    id: 2,
-    title: "PLC Programlamada Dikkat Edilmesi Gerekenler",
-    slug: "plc-programlamada-dikkat-edilmesi-gerekenler",
-    excerpt: "Siemens ve Inovance PLC'lerde yazılım geliştirirken sistem güvenliği ve performans için uygulamanız gereken en iyi pratikler.",
-    date: "5 Ağustos 2026",
-    author: "Mehmet Demir",
-    category: "Yazılım",
-  },
-  {
-    id: 3,
-    title: "Servo Motor Seçim Rehberi",
-    slug: "servo-motor-secim-rehberi",
-    excerpt: "Makine tasarımında doğru servo motor ve sürücü seçimi nasıl yapılır? Atalet momenti, tork hesaplama ve hız profili analizi.",
-    date: "28 Temmuz 2026",
-    author: "Ali Veli",
-    category: "Donanım",
-  },
-  {
-    id: 4,
-    title: "Ambalaj Sektöründe Yüksek Hızlı Paketleme Çözümleri",
-    slug: "ambalaj-sektorunde-yuksek-hizli-paketleme",
-    excerpt: "Saniyede yüzlerce ürün paketleyen modern ambalaj makinelerinin ardındaki otomasyon sırları ve sensör teknolojileri.",
-    date: "15 Temmuz 2026",
-    author: "Ayşe Kaya",
-    category: "Sektörel",
-  }
-];
+import type { Metadata } from "next";
 
-export default function ArticlesPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  let settings;
+  try {
+    settings = await fetchQuery(api.settings.getSettings);
+  } catch (e) {}
+
+  const title = "Makaleler & Haberler";
+  const description = "Sektörel gelişmeler, otomasyon teknolojilerindeki yenilikler ve uzman mühendislerimizin teknik yazılarını buradan takip edebilirsiniz.";
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: `${title} | ${settings?.metaTitle || settings?.siteName || "Betasoft"}`,
+      description,
+    },
+  };
+}
+
+export default async function ArticlesPage() {
+  const articles = await fetchQuery(api.articles.getActiveArticles);
+
   return (
     <div className="min-h-screen bg-zinc-50 pb-24">
       {/* Header */}
@@ -66,28 +52,36 @@ export default function ArticlesPage() {
       {/* Articles Grid */}
       <div className="container mx-auto px-4 mt-12 max-w-7xl">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {articlesData.map((article) => (
-            <article key={article.id} className="bg-white rounded-xl shadow-sm border border-zinc-200 overflow-hidden group hover:shadow-md transition-all duration-300 flex flex-col h-full">
+          {articles.map((article) => (
+            <article key={article._id} className="bg-white rounded-xl shadow-sm border border-zinc-200 overflow-hidden group hover:shadow-md transition-all duration-300 flex flex-col h-full">
               {/* Image Placeholder */}
               <div className="w-full h-48 bg-zinc-100 flex items-center justify-center relative overflow-hidden">
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] bg-[size:14px_24px] opacity-50 group-hover:scale-110 transition-transform duration-700" />
-                <span className="text-zinc-400 font-medium z-10 text-sm bg-white/80 px-3 py-1 rounded">
-                  [Görsel Alanı]
-                </span>
+                {article.imageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                ) : (
+                  <>
+                    <div className="absolute inset-0 bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] bg-[size:14px_24px] opacity-50 group-hover:scale-110 transition-transform duration-700" />
+                    <span className="text-zinc-400 font-medium z-10 text-sm bg-white/80 px-3 py-1 rounded">
+                      Görsel Yok
+                    </span>
+                  </>
+                )}
                 
                 {/* Category Badge */}
-                <span className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded z-20">
-                  {article.category}
+                <span className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded z-20 shadow-sm">
+                  {article.category || "Blog"}
                 </span>
               </div>
               
               <div className="p-6 flex flex-col flex-1">
                 <div className="flex items-center gap-4 text-xs text-zinc-500 mb-4">
                   <div className="flex items-center gap-1">
-                    <Calendar className="w-3 h-3" /> {article.date}
+                    <Calendar className="w-3 h-3" /> 
+                    {new Date(article._creationTime).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}
                   </div>
                   <div className="flex items-center gap-1">
-                    <User className="w-3 h-3" /> {article.author}
+                    <User className="w-3 h-3" /> Yönetici
                   </div>
                 </div>
                 
@@ -98,7 +92,7 @@ export default function ArticlesPage() {
                 </h2>
                 
                 <p className="text-zinc-600 text-sm mb-6 line-clamp-3 flex-1">
-                  {article.excerpt}
+                  {article.content.substring(0, 150)}...
                 </p>
                 
                 <Link 
@@ -110,6 +104,12 @@ export default function ArticlesPage() {
               </div>
             </article>
           ))}
+          
+          {articles.length === 0 && (
+            <div className="col-span-full py-20 text-center text-zinc-500">
+              Henüz yayınlanmış bir makale bulunmuyor.
+            </div>
+          )}
         </div>
       </div>
     </div>

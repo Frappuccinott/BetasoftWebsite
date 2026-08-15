@@ -1,17 +1,47 @@
 import Link from "next/link";
 import { ChevronRight, CheckCircle2, Cog } from "lucide-react";
+import { fetchQuery } from "convex/nextjs";
+import { api } from "@/convex/_generated/api";
+import { notFound } from "next/navigation";
+import { LightboxGallery } from "@/components/shared/LightboxGallery";
 
-// Fake showcase data
-const showcaseData = {
-  description: "Özel olarak tasarladığımız bu makine çözümü, üretim hattınızda maksimum verimlilik ve minimum fire ile çalışmak üzere mühendislerimiz tarafından geliştirilmiştir. Entegre edilen üst düzey otomasyon donanımları sayesinde sisteminizin uzun yıllar sorunsuz hizmet vermesi garanti altına alınmıştır.",
-  features: [
-    "İhtiyaca özel tasarım ve kapasite optimizasyonu",
-    "Enerji tasarrufu sağlayan verimli motor altyapısı",
-    "Gelişmiş güvenlik sensörleri ve acil durdurma sistemleri",
-    "Kolay kullanılabilir HMI (Dokunmatik) kontrol paneli",
-    "7/24 Uzaktan erişim ve arıza tespit imkanı"
-  ]
-};
+import type { Metadata, ResolvingMetadata } from "next";
+
+export async function generateMetadata(
+  { params }: { params: Promise<{ category: string; machine: string }> },
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const resolvedParams = await params;
+  const machine = await fetchQuery(api.machines.getMachineBySlug, { slug: resolvedParams.machine });
+  let settings;
+  try {
+    settings = await fetchQuery(api.settings.getSettings);
+  } catch (e) {}
+
+  if (!machine) return { title: "Makine Bulunamadı" };
+
+  const title = machine.metaTitle || `${machine.name} | ${machine.categoryName}`;
+  const description = machine.metaDescription || machine.description.substring(0, 150).replace(/\n/g, ' ') + '...';
+  const siteName = settings?.metaTitle || settings?.siteName || "Betasoft";
+
+  return {
+    title,
+    description,
+    keywords: machine.keywords ? machine.keywords.split(',').map((k: string) => k.trim()) : undefined,
+    openGraph: {
+      title: `${title} | ${siteName}`,
+      description,
+      type: "article",
+      images: machine.imageUrls?.[0] ? [{ url: machine.imageUrls[0] }] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: machine.imageUrls?.[0] ? [machine.imageUrls[0]] : [],
+    },
+  };
+}
 
 export default async function MachineShowcasePage({
   params,
@@ -20,15 +50,30 @@ export default async function MachineShowcasePage({
 }) {
   const resolvedParams = await params;
   
-  // Format the slugs back to readable text (mock logic)
-  const categoryName = resolvedParams.category.toUpperCase().replace("-", " ");
+  const machine = await fetchQuery(api.machines.getMachineBySlug, { slug: resolvedParams.machine });
   
-  // Basic un-slugify for machine name
-  const machineWords = resolvedParams.machine.split("-").map(word => word.charAt(0).toUpperCase() + word.slice(1));
-  const machineName = machineWords.join(" ");
+  if (!machine || machine.categorySlug !== resolvedParams.category) {
+    notFound();
+  }
+
+  const jsonLd = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": machine.name,
+    "image": machine.imageUrls || [],
+    "description": machine.metaDescription || machine.description,
+    "brand": {
+      "@type": "Brand",
+      "name": "Betasoft"
+    }
+  };
 
   return (
     <div className="min-h-screen bg-zinc-50 pb-24">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       
       {/* Hero / Header Section */}
       <div className="bg-zinc-900 text-white py-16 md:py-24 relative overflow-hidden">
@@ -41,11 +86,11 @@ export default async function MachineShowcasePage({
             <ChevronRight className="w-4 h-4" />
             <Link href="/cozumler" className="hover:text-white transition-colors">Sektörel Çözümler</Link>
             <ChevronRight className="w-4 h-4" />
-            <Link href={`/cozumler/${resolvedParams.category}`} className="hover:text-white transition-colors">
-              {categoryName}
+            <Link href={`/cozumler/${machine.categorySlug}`} className="hover:text-white transition-colors">
+              {machine.categoryName}
             </Link>
             <ChevronRight className="w-4 h-4" />
-            <span className="text-white font-medium">{machineName}</span>
+            <span className="text-white font-medium">{machine.name}</span>
           </div>
 
           <div className="max-w-3xl">
@@ -54,10 +99,10 @@ export default async function MachineShowcasePage({
               Özel Makine Üretimi
             </span>
             <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-              <span className="text-primary">{machineName}</span>
+              <span className="text-primary">{machine.name}</span>
             </h1>
-            <p className="text-lg md:text-xl text-zinc-400 leading-relaxed">
-              {showcaseData.description}
+            <p className="text-lg md:text-xl text-zinc-400 leading-relaxed whitespace-pre-line break-words">
+              {machine.description}
             </p>
           </div>
         </div>
@@ -73,27 +118,25 @@ export default async function MachineShowcasePage({
             <div>
               <h3 className="text-2xl font-bold text-zinc-900 mb-6">Makine Özellikleri ve Avantajları</h3>
               <ul className="space-y-4">
-                {showcaseData.features.map((feature, idx) => (
+                {machine.features.map((feature, idx) => (
                   <li key={idx} className="flex items-start gap-3 p-4 bg-zinc-50 rounded-xl border border-zinc-100 hover:border-emerald-200 hover:bg-emerald-50/30 transition-colors">
                     <CheckCircle2 className="w-6 h-6 text-emerald-500 shrink-0 mt-0.5" />
-                    <span className="text-zinc-700 font-medium leading-relaxed">{feature}</span>
+                    <span className="text-zinc-700 font-medium leading-relaxed break-words flex-1">{feature}</span>
                   </li>
                 ))}
+                {machine.features.length === 0 && (
+                  <p className="text-zinc-500">Bu makine için henüz özellik eklenmemiş.</p>
+                )}
               </ul>
             </div>
 
-            {/* Right Column: Visual Showcase */}
-            <div>
-              <div className="w-full aspect-[4/3] bg-zinc-50 rounded-2xl border-2 border-dashed border-zinc-200 flex flex-col items-center justify-center p-8 text-center mb-6 relative overflow-hidden">
-                <Cog className="w-16 h-16 text-zinc-200 mb-4 animate-[spin_10s_linear_infinite]" />
-                <h4 className="text-xl font-bold text-zinc-400 mb-2">3D Makine Modeli</h4>
-                <p className="text-sm text-zinc-500">Makinelerimizin örnek görselleri, üretim alanında çekilmiş fotoğrafları veya 3D tasarımları burada sergilenecektir.</p>
-              </div>
+            {/* Right Column: Visual Showcase (Gallery) */}
+            <div className="space-y-4">
+              <h3 className="text-2xl font-bold text-zinc-900 mb-6">Makine Görselleri</h3>
+              <LightboxGallery images={machine.imageUrls} machineName={machine.name} />
             </div>
 
           </div>
-
-
 
         </div>
       </div>

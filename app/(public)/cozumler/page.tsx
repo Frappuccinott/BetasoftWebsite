@@ -1,19 +1,42 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { fetchQuery } from "convex/nextjs";
+import { api } from "@/convex/_generated/api";
 
-// Fake data for the template
-const sectoralSolutions = [
-  { id: "ambalaj", title: "Ambalaj ve Paketleme Makineleri", count: 7 },
-  { id: "gida", title: "Gıda İşleme Makineleri", count: 2 },
-  { id: "plastik", title: "Plastik ve Kauçuk İşleme Makineleri", count: 1 },
-  { id: "geri-donusum", title: "Geri Dönüşüm Makineleri", count: 4 },
-  { id: "robotik", title: "Robotik ve Otomasyon", count: 2 },
-  { id: "tekstil", title: "Tekstil Makineleri", count: 3 },
-  { id: "hvac", title: "Temizleme / Sterilizasyon / HVAC", count: 3 },
-  { id: "lojistik", title: "Lojistik ve Depolama Sistemleri", count: 2 },
-];
+import type { Metadata } from "next";
 
-export default function SolutionsPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  let settings;
+  try {
+    settings = await fetchQuery(api.settings.getSettings);
+  } catch (e) {}
+
+  const title = "Sektörel Çözümlerimiz & Makinelerimiz";
+  const description = "Farklı endüstrilerin zorlu ihtiyaçlarına yönelik, yüksek verimli ve yenilikçi makine üretim çözümleri sunuyoruz.";
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: `${title} | ${settings?.metaTitle || settings?.siteName || "Betasoft"}`,
+      description,
+    },
+  };
+}
+
+export default async function SolutionsPage() {
+  const categories = await fetchQuery(api.categories.getCategories);
+
+  // Makinelerin sayılarını bulmak için makineleri de çekebiliriz
+  // Şimdilik sadece kategorileri listeliyoruz.
+  const machines = await fetchQuery(api.machines.getMachines);
+
+  // Kategori id'sine göre makine sayılarını hesaplayalım
+  const categoryCounts = machines.reduce((acc, machine) => {
+    acc[machine.categoryId] = (acc[machine.categoryId] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
   return (
     <div className="min-h-screen bg-zinc-50 pb-24">
       {/* Header */}
@@ -31,31 +54,40 @@ export default function SolutionsPage() {
       {/* Categories Grid */}
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {sectoralSolutions.map((solution) => (
-            <div key={solution.id} className="flex flex-col items-center group">
+          {categories.map((category) => (
+            <div key={category._id} className="flex flex-col items-center group">
               {/* Image Box */}
               <div className="w-full h-64 bg-white border border-zinc-200 rounded-xl mb-6 flex items-center justify-center overflow-hidden relative shadow-sm group-hover:shadow-md transition-shadow">
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,#f4f4f5_1px,transparent_1px),linear-gradient(to_bottom,#f4f4f5_1px,transparent_1px)] bg-[size:24px_24px]" />
-                <span className="text-zinc-400 font-medium z-10 text-center px-4">[Görsel: {solution.title}]</span>
+                {category.imageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={category.imageUrl} alt={category.name} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="absolute inset-0 bg-[linear-gradient(to_right,#f4f4f5_1px,transparent_1px),linear-gradient(to_bottom,#f4f4f5_1px,transparent_1px)] bg-[size:24px_24px]" />
+                )}
               </div>
               
               {/* Info */}
               <h3 className="text-xl font-bold text-zinc-900 mb-2 text-center h-14 flex items-center justify-center">
-                {solution.title}
+                {category.name}
               </h3>
               <p className="text-sm text-zinc-500 mb-6 text-center">
-                {solution.count} Farklı Makine Çözümü
+                {categoryCounts[category._id] || 0} Farklı Makine Çözümü
               </p>
               
               {/* Button */}
               <Link
-                href={`/cozumler/${solution.id}`}
+                href={`/cozumler/${category.slug}`}
                 className="bg-primary text-white font-semibold px-6 py-2.5 rounded-md hover:bg-primary/90 transition-colors inline-block"
               >
                 Makineleri İncele
               </Link>
             </div>
           ))}
+          {categories.length === 0 && (
+            <div className="col-span-full text-center py-12 text-zinc-500">
+              Henüz bir kategori eklenmemiş.
+            </div>
+          )}
         </div>
       </div>
     </div>

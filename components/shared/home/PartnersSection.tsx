@@ -1,7 +1,6 @@
 import React from "react";
 
-// TODO: Bu veri ileride veritabanından (admin panel üzerinden) çekilecektir.
-const partners = [
+const staticPartners = [
   { id: 1, name: "ABB", imageUrl: "https://via.placeholder.com/300x120/e5e5e5/ff000f?text=ABB" },
   { id: 2, name: "EATON", imageUrl: "https://via.placeholder.com/300x120/e5e5e5/005eb8?text=EATON" },
   { id: 3, name: "OMRON", imageUrl: "https://via.placeholder.com/300x120/e5e5e5/005cb9?text=OMRON" },
@@ -10,7 +9,15 @@ const partners = [
   { id: 6, name: "Schneider Electric", imageUrl: "https://via.placeholder.com/300x120/ffffff/3dcd58?text=Schneider" },
 ];
 
-export function PartnersSection() {
+export function PartnersSection({ 
+  partnersImageUrls 
+}: { 
+  partnersImageUrls?: string[] 
+}) {
+  const displayPartners = partnersImageUrls && partnersImageUrls.length > 0 
+    ? partnersImageUrls.map((url, i) => ({ id: i, name: `Partner ${i}`, imageUrl: url }))
+    : staticPartners;
+
   return (
     <section className="py-24 bg-white border-t border-zinc-100">
       <div className="container mx-auto px-4">
@@ -22,7 +29,7 @@ export function PartnersSection() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {partners.map((partner) => (
+          {displayPartners.map((partner) => (
             <div 
               key={partner.id} 
               className="h-24 bg-white border border-zinc-100 rounded-lg flex items-center justify-center p-4 transition-transform hover:scale-105 duration-300 shadow-sm hover:shadow-md overflow-hidden group"
