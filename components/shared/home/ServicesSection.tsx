@@ -35,7 +35,7 @@ export function ServicesSection({
       </Link>
 
       {/* İki blok arasına eklenen dikey çizgi (Mobilde yatay) */}
-      <div className="w-full h-1.5 md:w-1.5 md:h-full bg-black shrink-0" />
+      <div className="w-full h-1.5 md:w-1.5 md:h-full bg-white shrink-0" />
 
       {/* Çalışmalarımız Block */}
       <Link href="/fotograf-galerisi" className="relative flex-1 group overflow-hidden cursor-pointer bg-zinc-900 block">
