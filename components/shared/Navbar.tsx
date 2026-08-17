@@ -123,9 +123,9 @@ export function Navbar({ settings }: { settings?: any }) {
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className="grid w-[250px] gap-1 p-2">
+                    <ListItem href="/servis/otomasyon-cozumleri" title="Otomasyon Çözümleri" />
                     <ListItem href="/servis/kurulum" title="Kurulum ve Montaj" />
                     <ListItem href="/servis/bakim" title="Periyodik Bakım" />
-                    <ListItem href="/servis/otomasyon-cozumleri" title="Otomasyon Çözümleri" />
                   </ul>
                 </NavigationMenuContent>
               </NavigationMenuItem>
@@ -218,9 +218,9 @@ export function Navbar({ settings }: { settings?: any }) {
                       SERVİS VE TEKNİK DESTEK
                     </AccordionTrigger>
                     <AccordionContent className="px-6 pb-4 pt-2 bg-zinc-100/50 flex flex-col space-y-3">
+                      <Link href="/servis/otomasyon-cozumleri" onClick={() => setIsOpen(false)} className="text-zinc-600 hover:text-primary">Otomasyon Çözümleri</Link>
                       <Link href="/servis/kurulum" onClick={() => setIsOpen(false)} className="text-zinc-600 hover:text-primary">Kurulum ve Montaj</Link>
                       <Link href="/servis/bakim" onClick={() => setIsOpen(false)} className="text-zinc-600 hover:text-primary">Periyodik Bakım</Link>
-                      <Link href="/servis/otomasyon-cozumleri" onClick={() => setIsOpen(false)} className="text-zinc-600 hover:text-primary">Otomasyon Çözümleri</Link>
                     </AccordionContent>
                   </AccordionItem>
                   
