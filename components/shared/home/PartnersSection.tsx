@@ -22,9 +22,9 @@ export function PartnersSection({
     <section className="py-24 bg-white border-t border-zinc-100">
       <div className="container mx-auto px-4">
         <div className="mb-12">
-          <h2 className="text-3xl font-bold text-[#003399] mb-4 relative inline-block">
+          <h2 className="text-3xl font-bold text-primary mb-4 relative inline-block">
             Çözüm Partnerlerimiz
-            <span className="absolute -bottom-2 left-0 w-16 h-1 bg-[#003399]"></span>
+            <span className="absolute -bottom-2 left-0 w-16 h-1 bg-primary"></span>
           </h2>
         </div>
 
