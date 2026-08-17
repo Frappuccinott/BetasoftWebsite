@@ -11,7 +11,7 @@ export function ServicesSection({
   return (
     <section className="w-full flex flex-col md:flex-row h-[400px] md:h-[500px]">
       {/* Hizmetlerimiz Block */}
-      <Link href="/cozumler" className="relative flex-1 group overflow-hidden cursor-pointer border-b md:border-b-0 md:border-r border-zinc-800 bg-zinc-900 block">
+      <Link href="/cozumler" className="relative flex-1 group overflow-hidden cursor-pointer bg-zinc-900 block">
         {/* Image Placeholder with Zoom Effect */}
         <div 
           className="absolute inset-0 bg-zinc-800 transition-transform duration-700 ease-in-out group-hover:scale-110 bg-cover bg-center" 
@@ -33,6 +33,9 @@ export function ServicesSection({
           </span>
         </div>
       </Link>
+
+      {/* İki blok arasına eklenen dikey çizgi (Mobilde yatay) */}
+      <div className="w-full h-1.5 md:w-1.5 md:h-full bg-black shrink-0" />
 
       {/* Çalışmalarımız Block */}
       <Link href="/fotograf-galerisi" className="relative flex-1 group overflow-hidden cursor-pointer bg-zinc-900 block">

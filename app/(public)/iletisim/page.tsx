@@ -10,7 +10,8 @@ export default async function IletisimPage() {
     console.error("Convex fetch failed:", e);
   }
 
-  const phone = settings?.phone || process.env.NEXT_PUBLIC_PHONE || "0538 061 75 32";
+  const phone = settings?.phone || process.env.NEXT_PUBLIC_PHONE || "0534 916 36 45";
+  const phone2 = settings?.phone2 || "0536 709 59 37";
   const email = settings?.email || process.env.NEXT_PUBLIC_EMAIL || "info@betasoft.com";
   const address = settings?.address || process.env.NEXT_PUBLIC_ADDRESS || "İkitelli OSB, Triko center sanayi sit. M1 Blok No:22 BAŞAKŞEHİR / İSTANBUL";
   const mapUrl = settings?.mapLink || process.env.NEXT_PUBLIC_MAP_URL || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d192697.79327429156!2d28.871754026367353!3d41.00549580977239!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14caa7040068086b%3A0xe1ccfe98bc01b0d0!2zxLBzdGFuYnVs!5e0!3m2!1str!2str!4v1700000000000!5m2!1str!2str";
@@ -33,10 +34,17 @@ export default async function IletisimPage() {
                 <div className="w-14 h-14 rounded-full bg-emerald-50 flex items-center justify-center shrink-0">
                   <Phone className="w-6 h-6 text-emerald-500" />
                 </div>
-                <div className="flex flex-col text-zinc-700 font-medium text-lg">
-                  <a href={`tel:${phone.replace(/\s+/g, "")}`} className="hover:text-primary transition-colors">
-                    {phone}
-                  </a>
+                <div className="flex flex-col gap-1 text-zinc-700 font-medium text-lg">
+                  {phone && (
+                    <a href={`tel:${phone.replace(/\s+/g, "")}`} className="hover:text-primary transition-colors">
+                      {phone}
+                    </a>
+                  )}
+                  {phone2 && (
+                    <a href={`tel:${phone2.replace(/\s+/g, "")}`} className="hover:text-primary transition-colors">
+                      {phone2}
+                    </a>
+                  )}
                 </div>
               </div>
 

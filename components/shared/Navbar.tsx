@@ -43,7 +43,8 @@ const productCategories = [
 
 export function Navbar({ settings }: { settings?: any }) {
   const siteName = settings?.siteName || process.env.NEXT_PUBLIC_SITE_NAME || "Betasoft";
-  const phone = settings?.phone || process.env.NEXT_PUBLIC_PHONE || "0212 549 03 75";
+  const phone = settings?.phone || process.env.NEXT_PUBLIC_PHONE || "0534 916 36 45";
+  const phone2 = settings?.phone2 || "0536 709 59 37";
   const router = useRouter();
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -248,8 +249,18 @@ export function Navbar({ settings }: { settings?: any }) {
                   </div>
                 </Accordion>
 
-                <div className="px-6 mt-8">
-                  <p className="text-sm text-zinc-500">Müşteri Hizmetleri: {phone}</p>
+                <div className="px-6 mt-8 space-y-1">
+                  <p className="text-sm text-zinc-500 font-medium">Müşteri Hizmetleri:</p>
+                  {phone && (
+                    <a href={`tel:${phone.replace(/\s+/g, "")}`} className="block text-sm text-primary hover:underline">
+                      {phone}
+                    </a>
+                  )}
+                  {phone2 && (
+                    <a href={`tel:${phone2.replace(/\s+/g, "")}`} className="block text-sm text-primary hover:underline">
+                      {phone2}
+                    </a>
+                  )}
                 </div>
 
               </div>

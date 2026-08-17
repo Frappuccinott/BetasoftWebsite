@@ -22,7 +22,7 @@ export default async function HomePage() {
     "logo": `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/logo.png`,
     "contactPoint": {
       "@type": "ContactPoint",
-      "telephone": settings?.phone || "",
+      "telephone": [settings?.phone, settings?.phone2].filter(Boolean).join(", ") || "",
       "contactType": "customer service"
     },
     "sameAs": [
@@ -39,10 +39,17 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <HeroSection />
+      
+      {/* Slider ile Hizmetlerimiz/Çalışmalarımız kısmını ayıran üst çizgi */}
+      <div className="w-full h-1.5 bg-black" />
+      
       <ServicesSection 
         servicesImageUrl={settings?.servicesImageUrl} 
         worksImageUrl={settings?.worksImageUrl} 
       />
+      
+      {/* Hizmetlerimiz/Çalışmalarımız kısmının bittiği yeri belirten alt çizgi */}
+      <div className="w-full h-1.5 bg-black" />
       <LatestArticlesSection />
       <PartnersSection 
         partnersImageUrls={settings?.partnersImageUrls} 

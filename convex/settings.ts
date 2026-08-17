@@ -12,6 +12,7 @@ export const updateSettings = mutation({
   args: {
     siteName: v.optional(v.string()),
     phone: v.optional(v.string()),
+    phone2: v.optional(v.string()),
     email: v.optional(v.string()),
     address: v.optional(v.string()),
     mapLink: v.optional(v.string()),

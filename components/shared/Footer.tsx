@@ -3,7 +3,8 @@ import { Mail, Phone, MapPin } from "lucide-react";
 
 export function Footer({ settings }: { settings?: any }) {
   const siteName = settings?.siteName || process.env.NEXT_PUBLIC_SITE_NAME || "Betasoft";
-  const phone = settings?.phone || process.env.NEXT_PUBLIC_PHONE || "0212 549 65 73";
+  const phone = settings?.phone || process.env.NEXT_PUBLIC_PHONE || "0534 916 36 45";
+  const phone2 = settings?.phone2 || "0536 709 59 37";
   const email = settings?.email || process.env.NEXT_PUBLIC_EMAIL || "info@betasoft.com";
   const address = settings?.address || process.env.NEXT_PUBLIC_ADDRESS || "Organize Sanayi Bölgesi, 1. Cadde No:5, Başakşehir / İstanbul";
 
@@ -26,11 +27,20 @@ export function Footer({ settings }: { settings?: any }) {
                 <MapPin className="w-5 h-5 text-primary shrink-0" />
                 <p className="whitespace-pre-line">{address}</p>
               </div>
-              <div className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-primary shrink-0" />
-                <a href={`tel:${phone.replace(/\s+/g, "")}`} className="hover:text-white transition-colors">
-                  {phone}
-                </a>
+              <div className="flex items-start gap-3">
+                <Phone className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                <div className="flex flex-col gap-1">
+                  {phone && (
+                    <a href={`tel:${phone.replace(/\s+/g, "")}`} className="hover:text-white transition-colors">
+                      {phone}
+                    </a>
+                  )}
+                  {phone2 && (
+                    <a href={`tel:${phone2.replace(/\s+/g, "")}`} className="hover:text-white transition-colors">
+                      {phone2}
+                    </a>
+                  )}
+                </div>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-primary shrink-0" />

@@ -23,6 +23,7 @@ export default function SettingsPage() {
   const [formData, setFormData] = useState({
     siteName: "",
     phone: "",
+    phone2: "",
     email: "",
     address: "",
     mapLink: "",
@@ -54,6 +55,7 @@ export default function SettingsPage() {
       setFormData({
         siteName: settings.siteName || "",
         phone: settings.phone || "",
+        phone2: settings.phone2 || "",
         email: settings.email || "",
         address: settings.address || "",
         mapLink: settings.mapLink || "",
@@ -85,6 +87,7 @@ export default function SettingsPage() {
     const originalData = {
       siteName: settings.siteName || "",
       phone: settings.phone || "",
+      phone2: settings.phone2 || "",
       email: settings.email || "",
       address: settings.address || "",
       mapLink: settings.mapLink || "",
@@ -220,14 +223,25 @@ export default function SettingsPage() {
                   placeholder="Örn: Betasoft Makine"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Telefon Numarası</Label>
-                <Input 
-                  id="phone" 
-                  value={formData.phone} 
-                  onChange={handleChange} 
-                  placeholder="Örn: 0212 549 65 73"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="phone">No 1 (Telefon)</Label>
+                  <Input 
+                    id="phone" 
+                    value={formData.phone} 
+                    onChange={handleChange} 
+                    placeholder="Örn: 0534 916 36 45"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone2">No 2 (Telefon)</Label>
+                  <Input 
+                    id="phone2" 
+                    value={formData.phone2} 
+                    onChange={handleChange} 
+                    placeholder="Örn: 0536 709 59 37"
+                  />
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">E-posta Adresi</Label>
