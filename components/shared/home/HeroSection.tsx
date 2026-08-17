@@ -6,32 +6,15 @@ import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
-const sliderImages = [
-  {
-    id: 1,
-    url: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop",
-    alt: "Endüstriyel Makine Üretimi"
-  },
-  {
-    id: 2,
-    url: "https://images.unsplash.com/photo-1537462715879-360eeb61a0ad?q=80&w=2136&auto=format&fit=crop",
-    alt: "Fabrika Otomasyon Sistemleri"
-  },
-  {
-    id: 3,
-    url: "https://images.unsplash.com/photo-1565514020179-026b92b84bb6?q=80&w=2070&auto=format&fit=crop",
-    alt: "Robotik Kol Entegrasyonu"
-  }
-];
 
 export function HeroSection() {
   const settings = useQuery(api.settings.getSettings);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Use dynamic images from settings if available, otherwise fallback to default
+  // Use dynamic images from settings if available
   const dynamicImages = settings?.slideImageUrls && settings.slideImageUrls.length > 0 
     ? settings.slideImageUrls.map((url, idx) => ({ id: idx, url, alt: `Slide ${idx + 1}` }))
-    : sliderImages;
+    : [];
 
   useEffect(() => {
     if (dynamicImages.length === 0) return;
@@ -69,8 +52,8 @@ export function HeroSection() {
         </div>
       ))}
       
-      {/* Overlay to ensure text readability */}
-      <div className="absolute inset-0 bg-black/70 z-10 transition-opacity duration-300" />
+      {/* Overlay to ensure text readability (Siyahlık oranını buradaki bg-black/40 kısmından ayarlayabilirsiniz. Örn: bg-black/50, bg-black/30, bg-transparent) */}
+      <div className="absolute inset-0 bg-black/40 z-10 transition-opacity duration-300" />
       
       {/* Decorative Grid/Pattern Overlay */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px] z-10 opacity-60" />
