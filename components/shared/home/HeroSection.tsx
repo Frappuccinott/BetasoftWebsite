@@ -55,8 +55,7 @@ export function HeroSection() {
       {/* Overlay to ensure text readability (Siyahlık oranını buradaki bg-black/40 kısmından ayarlayabilirsiniz. Örn: bg-black/50, bg-black/30, bg-transparent) */}
       <div className="absolute inset-0 bg-black/20 z-10 transition-opacity duration-300" />
 
-      {/* Decorative Grid/Pattern Overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px] z-10 opacity-60" />
+      {/* Decorative Grid/Pattern Overlay kaldırıldı */}
 
       {/* Slider Controls */}
       <button
