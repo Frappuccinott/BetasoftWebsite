@@ -19,7 +19,10 @@ export async function generateMetadata(): Promise<Metadata> {
   let settings;
   try {
     settings = await fetchQuery(api.settings.getSettings);
-  } catch (e) {
+  } catch (e: any) {
+    if (e.digest === "DYNAMIC_SERVER_USAGE" || e.message?.includes("Dynamic server usage") || e.message?.includes("DYNAMIC_SERVER_USAGE")) {
+      throw e;
+    }
     console.error("Convex fetch failed:", e);
   }
   
@@ -60,7 +63,10 @@ export default async function RootLayout({
   let settings;
   try {
     settings = await fetchQuery(api.settings.getSettings);
-  } catch (e) {
+  } catch (e: any) {
+    if (e.digest === "DYNAMIC_SERVER_USAGE" || e.message?.includes("Dynamic server usage") || e.message?.includes("DYNAMIC_SERVER_USAGE")) {
+      throw e;
+    }
     console.error("Convex fetch failed:", e);
   }
 

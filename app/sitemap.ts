@@ -14,7 +14,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     articles = await fetchQuery(api.articles.getActiveArticles);
     categories = await fetchQuery(api.categories.getCategories);
     machines = await fetchQuery(api.machines.getMachines);
-  } catch (e) {
+  } catch (e: any) {
+    if (e.digest === "DYNAMIC_SERVER_USAGE" || e.message?.includes("Dynamic server usage") || e.message?.includes("DYNAMIC_SERVER_USAGE")) {
+      throw e;
+    }
     console.error("Convex fetch failed for sitemap:", e);
   }
 
