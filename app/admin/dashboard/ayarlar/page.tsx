@@ -23,9 +23,7 @@ export default function SettingsPage() {
   const [formData, setFormData] = useState({
     siteName: "",
     phone: "",
-    phoneName: "",
     phone2: "",
-    phone2Name: "",
     email: "",
     address: "",
     mapLink: "",
@@ -57,9 +55,7 @@ export default function SettingsPage() {
       setFormData({
         siteName: settings.siteName || "",
         phone: settings.phone || "",
-        phoneName: settings.phoneName || "",
         phone2: settings.phone2 || "",
-        phone2Name: settings.phone2Name || "",
         email: settings.email || "",
         address: settings.address || "",
         mapLink: settings.mapLink || "",
@@ -91,9 +87,7 @@ export default function SettingsPage() {
     const originalData = {
       siteName: settings.siteName || "",
       phone: settings.phone || "",
-      phoneName: settings.phoneName || "",
       phone2: settings.phone2 || "",
-      phone2Name: settings.phone2Name || "",
       email: settings.email || "",
       address: settings.address || "",
       mapLink: settings.mapLink || "",
@@ -230,46 +224,23 @@ export default function SettingsPage() {
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-4 p-4 bg-slate-50 border border-slate-100 rounded-lg">
-                  <div className="space-y-2">
-                    <Label htmlFor="phoneName">No 1 (İsim)</Label>
-                    <Input 
-                      id="phoneName" 
-                      value={formData.phoneName} 
-                      onChange={handleChange} 
-                      placeholder="Örn: İzzettin Vuruş"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">No 1 (Telefon)</Label>
-                    <Input 
-                      id="phone" 
-                      value={formData.phone} 
-                      onChange={handleChange} 
-                      placeholder="Örn: 0534 916 36 45"
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">No 1 (Telefon)</Label>
+                  <Input 
+                    id="phone" 
+                    value={formData.phone} 
+                    onChange={handleChange} 
+                    placeholder="Örn: 0534 916 36 45"
+                  />
                 </div>
-                
-                <div className="space-y-4 p-4 bg-slate-50 border border-slate-100 rounded-lg">
-                  <div className="space-y-2">
-                    <Label htmlFor="phone2Name">No 2 (İsim)</Label>
-                    <Input 
-                      id="phone2Name" 
-                      value={formData.phone2Name} 
-                      onChange={handleChange} 
-                      placeholder="Örn: Mert Kıvrak"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone2">No 2 (Telefon)</Label>
-                    <Input 
-                      id="phone2" 
-                      value={formData.phone2} 
-                      onChange={handleChange} 
-                      placeholder="Örn: 0536 709 59 37"
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone2">No 2 (Telefon)</Label>
+                  <Input 
+                    id="phone2" 
+                    value={formData.phone2} 
+                    onChange={handleChange} 
+                    placeholder="Örn: 0536 709 59 37"
+                  />
                 </div>
               </div>
               <div className="space-y-2">
