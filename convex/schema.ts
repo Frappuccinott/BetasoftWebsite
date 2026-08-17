@@ -52,7 +52,9 @@ export default defineSchema({
   settings: defineTable({
     siteName: v.optional(v.string()),
     phone: v.optional(v.string()),
+    phoneName: v.optional(v.string()),
     phone2: v.optional(v.string()),
+    phone2Name: v.optional(v.string()),
     email: v.optional(v.string()),
     address: v.optional(v.string()),
     mapLink: v.optional(v.string()),
