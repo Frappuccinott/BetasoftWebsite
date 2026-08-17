@@ -41,3 +41,16 @@ yarn-error.log*
 next-env.d.ts
 
 /lib/generated/prismass
+
+# AI agent / tool-local dosyalar (skill cache'leri, çalışması için gerekli değil)
+/.agents/skills
+/.claude/skills
+skills-lock.json
+/convex/_generated/ai
+
+# scratch / geçici dosyalar
+/scratch
+
+# editor
+/.vscode
+/.idea
