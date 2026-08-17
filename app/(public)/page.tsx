@@ -41,7 +41,7 @@ export default async function HomePage() {
       <HeroSection />
       
       {/* Slider ile Hizmetlerimiz/Çalışmalarımız kısmını ayıran üst çizgi */}
-      <div className="w-full h-1.5 bg-black" />
+      <div className="w-full h-1.5" style={{ backgroundColor: process.env.NEXT_PUBLIC_PRIMARY_COLOR || '#e30a17' }} />
       
       <ServicesSection 
         servicesImageUrl={settings?.servicesImageUrl} 
@@ -49,7 +49,7 @@ export default async function HomePage() {
       />
       
       {/* Hizmetlerimiz/Çalışmalarımız kısmının bittiği yeri belirten alt çizgi */}
-      <div className="w-full h-1.5 bg-black" />
+      <div className="w-full h-1.5" style={{ backgroundColor: process.env.NEXT_PUBLIC_PRIMARY_COLOR || '#e30a17' }} />
       <LatestArticlesSection />
       <PartnersSection 
         partnersImageUrls={settings?.partnersImageUrls} 
