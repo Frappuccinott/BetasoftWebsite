@@ -8,12 +8,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Plus, Edit2, Trash2, Image as ImageIcon, Loader2, Search } from "lucide-react";
 import { toast } from "sonner";
 import { ConfirmModal } from "@/components/admin/ConfirmModal";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { deleteGallery as deleteGalleryAction } from "@/actions/admin/galleries";
 
 export default function GalleryPage() {
   const galleries = useQuery(api.galleries.getGalleries);
-  const deleteGallery = useMutation(api.galleries.deleteGallery);
   const [searchQuery, setSearchQuery] = useState("");
   
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -31,7 +31,7 @@ export default function GalleryPage() {
     
     try {
       const { _id: id, coverImage, images = [] } = itemToDelete;
-      const result = await deleteGallery({ id });
+      const result = await deleteGalleryAction({ id });
       
       if (!result.success) {
         toast.error(result.error);

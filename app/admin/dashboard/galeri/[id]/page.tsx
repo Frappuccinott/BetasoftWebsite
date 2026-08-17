@@ -12,8 +12,9 @@ import { ImageUploader } from "@/components/admin/ImageUploader";
 import { MultiImageUploader } from "@/components/admin/MultiImageUploader";
 import { toast } from "sonner";
 
-import { useQuery, useMutation } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { updateGallery as updateGalleryAction } from "@/actions/admin/galleries";
 import { Id } from "@/convex/_generated/dataModel";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 
@@ -26,7 +27,6 @@ export default function EditGalleryPage({
   const resolvedParams = use(params);
   
   const gallery = useQuery(api.galleries.getGalleryById, { id: resolvedParams.id as Id<"galleries"> });
-  const updateGallery = useMutation(api.galleries.updateGallery);
   
   // Form States
   const [title, setTitle] = useState("");
@@ -86,7 +86,7 @@ export default function EditGalleryPage({
     setIsSubmitting(true);
     
     try {
-      const result = await updateGallery({
+      const result = await updateGalleryAction({
         id: resolvedParams.id as Id<"galleries">,
         title,
         coverImage,

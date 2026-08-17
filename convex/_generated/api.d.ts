@@ -10,9 +10,11 @@
 
 import type * as analytics from "../analytics.js";
 import type * as articles from "../articles.js";
+import type * as auth from "../auth.js";
 import type * as categories from "../categories.js";
 import type * as galleries from "../galleries.js";
 import type * as images from "../images.js";
+import type * as login from "../login.js";
 import type * as machines from "../machines.js";
 import type * as settings from "../settings.js";
 
@@ -25,9 +27,11 @@ import type {
 declare const fullApi: ApiFromModules<{
   analytics: typeof analytics;
   articles: typeof articles;
+  auth: typeof auth;
   categories: typeof categories;
   galleries: typeof galleries;
   images: typeof images;
+  login: typeof login;
   machines: typeof machines;
   settings: typeof settings;
 }>;

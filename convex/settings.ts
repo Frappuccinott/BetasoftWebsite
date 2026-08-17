@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { requireAdmin } from "./auth";
 
 export const getSettings = query({
   args: {},
@@ -10,6 +11,7 @@ export const getSettings = query({
 
 export const updateSettings = mutation({
   args: {
+    sessionToken: v.string(),
     siteName: v.optional(v.string()),
     phone: v.optional(v.string()),
     phone2: v.optional(v.string()),
@@ -35,13 +37,15 @@ export const updateSettings = mutation({
     automationImageUrl: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    await requireAdmin(args.sessionToken);
+    const { sessionToken, ...updateData } = args;
     const existing = await ctx.db.query("settings").first();
 
     if (existing) {
-      await ctx.db.patch(existing._id, args);
+      await ctx.db.patch(existing._id, updateData);
       return { success: true, id: existing._id, error: undefined };
     } else {
-      const id = await ctx.db.insert("settings", args);
+      const id = await ctx.db.insert("settings", updateData);
       return { success: true, id, error: undefined };
     }
   },

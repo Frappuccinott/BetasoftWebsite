@@ -68,7 +68,7 @@ export default function LoginPage() {
                 id="email" 
                 name="email"
                 type="email" 
-                placeholder="admin@betasoft.com" 
+                placeholder="ornek@sirket.com" 
                 required 
                 className="bg-white"
               />

@@ -11,13 +11,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import { SeoFormFields } from "@/components/admin/SeoFormFields";
 import { toast } from "sonner";
-import { useMutation } from "convex/react";
+import { createCategory as createCategoryAction } from "@/actions/admin/categories";
 import { api } from "@/convex/_generated/api";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 
 export default function NewCategoryPage() {
   const router = useRouter();
-  const createCategory = useMutation(api.categories.createCategory);
   
   // Form States
   const [name, setName] = useState("");
@@ -42,7 +41,7 @@ export default function NewCategoryPage() {
       const { slugify } = await import("@/lib/utils");
       const slug = slugify(name);
       
-      const result = await createCategory({
+      const result = await createCategoryAction({
         name,
         slug,
         imageUrl,

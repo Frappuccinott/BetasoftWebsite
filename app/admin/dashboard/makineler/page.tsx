@@ -8,12 +8,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Plus, Edit2, Trash2, Image as ImageIcon, Loader2, Search } from "lucide-react";
 import { toast } from "sonner";
 import { ConfirmModal } from "@/components/admin/ConfirmModal";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { deleteMachine as deleteMachineAction } from "@/actions/admin/machines";
 
 export default function MachinesPage() {
   const machines = useQuery(api.machines.getMachines);
-  const deleteMachine = useMutation(api.machines.deleteMachine);
   const [searchQuery, setSearchQuery] = useState("");
   
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -31,7 +31,7 @@ export default function MachinesPage() {
     
     try {
       const { _id: id, imageUrls = [] } = itemToDelete;
-      const result = await deleteMachine({ id });
+      const result = await deleteMachineAction({ id });
       
       if (!result.success) {
         toast.error(result.error);

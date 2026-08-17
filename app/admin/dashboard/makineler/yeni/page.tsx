@@ -14,15 +14,15 @@ import { MultiImageUploader } from "@/components/admin/MultiImageUploader";
 import { SeoFormFields } from "@/components/admin/SeoFormFields";
 import { toast } from "sonner";
 
-import { useQuery, useMutation } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { createMachine as createMachineAction } from "@/actions/admin/machines";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 
 export default function NewMachinePage() {
   const router = useRouter();
   
   const categories = useQuery(api.categories.getCategories);
-  const createMachine = useMutation(api.machines.createMachine);
   
   // Form States
   const [name, setName] = useState("");
@@ -69,7 +69,7 @@ export default function NewMachinePage() {
       const { slugify } = await import("@/lib/utils");
       const slug = slugify(name);
       
-      const result = await createMachine({
+      const result = await createMachineAction({
         name,
         slug,
         categoryId: categoryId as any,

@@ -8,12 +8,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Plus, Edit2, Trash2, Image as ImageIcon, Loader2, Search } from "lucide-react";
 import { toast } from "sonner";
 import { ConfirmModal } from "@/components/admin/ConfirmModal";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { deleteCategory as deleteCategoryAction } from "@/actions/admin/categories";
 
 export default function CategoriesPage() {
   const categories = useQuery(api.categories.getCategories);
-  const deleteCategory = useMutation(api.categories.deleteCategory);
   const [searchQuery, setSearchQuery] = useState("");
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -31,7 +31,7 @@ export default function CategoriesPage() {
     
     try {
       const { _id: id, imageUrl } = itemToDelete;
-      const result = await deleteCategory({ id });
+      const result = await deleteCategoryAction({ id });
       
       if (!result.success) {
         toast.error(result.error);

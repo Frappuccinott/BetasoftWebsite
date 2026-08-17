@@ -13,8 +13,9 @@ import { ImageUploader } from "@/components/admin/ImageUploader";
 import { MarkdownEditor } from "@/components/admin/MarkdownEditor";
 import { SeoFormFields } from "@/components/admin/SeoFormFields";
 import { toast } from "sonner";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { updateArticle as updateArticleAction } from "@/actions/admin/articles";
 import { Id } from "@/convex/_generated/dataModel";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 
@@ -24,7 +25,6 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
   const articleId = resolvedParams.id as Id<"articles">;
   
   const article = useQuery(api.articles.getArticleById, { id: articleId });
-  const updateArticle = useMutation(api.articles.updateArticle);
   
   // Form States
   const [title, setTitle] = useState("");
@@ -113,7 +113,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
       const { slugify } = await import("@/lib/utils");
       const slug = slugify(title);
       
-      const result = await updateArticle({
+      const result = await updateArticleAction({
         id: articleId,
         title,
         slug,

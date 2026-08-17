@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
+import { requireAdmin } from "./auth";
 
 export const getMachines = query({
   args: {},
@@ -40,6 +41,7 @@ export const getMachineBySlug = query({
       .unique();
       
     if (!machine) return null;
+    if (machine.status !== "Aktif") return null;
     
     const category = await ctx.db.get(machine.categoryId);
     return {
@@ -52,6 +54,7 @@ export const getMachineBySlug = query({
 
 export const createMachine = mutation({
   args: {
+    sessionToken: v.string(),
     name: v.string(),
     slug: v.string(),
     categoryId: v.id("categories"),
@@ -63,6 +66,7 @@ export const createMachine = mutation({
     keywords: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    await requireAdmin(args.sessionToken);
     const existing = await ctx.db
       .query("machines")
       .withIndex("by_slug", (q) => q.eq("slug", args.slug))
@@ -90,8 +94,9 @@ export const createMachine = mutation({
 });
 
 export const deleteMachine = mutation({
-  args: { id: v.id("machines") },
+  args: { sessionToken: v.string(), id: v.id("machines") },
   handler: async (ctx, args) => {
+    await requireAdmin(args.sessionToken);
     await ctx.db.delete(args.id);
     return { success: true, error: undefined };
   },
@@ -106,6 +111,7 @@ export const getMachineById = query({
 
 export const updateMachine = mutation({
   args: {
+    sessionToken: v.string(),
     id: v.id("machines"),
     name: v.string(),
     slug: v.string(),
@@ -118,6 +124,7 @@ export const updateMachine = mutation({
     keywords: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    await requireAdmin(args.sessionToken);
     const existing = await ctx.db
       .query("machines")
       .withIndex("by_slug", (q) => q.eq("slug", args.slug))

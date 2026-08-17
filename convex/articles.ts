@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
+import { requireAdmin } from "./auth";
 
 export const getArticles = query({
   args: {},
@@ -19,10 +20,12 @@ export const getActiveArticles = query({
 export const getArticleBySlug = query({
   args: { slug: v.string() },
   handler: async (ctx, args) => {
-    return await ctx.db
+    const article = await ctx.db
       .query("articles")
       .withIndex("by_slug", (q) => q.eq("slug", args.slug))
       .unique();
+    if (!article || article.status !== "Aktif") return null;
+    return article;
   },
 });
 
@@ -35,6 +38,7 @@ export const getArticleById = query({
 
 export const createArticle = mutation({
   args: {
+    sessionToken: v.string(),
     title: v.string(),
     slug: v.string(),
     content: v.string(),
@@ -46,6 +50,7 @@ export const createArticle = mutation({
     keywords: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    await requireAdmin(args.sessionToken);
     const existing = await ctx.db
       .query("articles")
       .withIndex("by_slug", (q) => q.eq("slug", args.slug))
@@ -73,6 +78,7 @@ export const createArticle = mutation({
 
 export const updateArticle = mutation({
   args: {
+    sessionToken: v.string(),
     id: v.id("articles"),
     title: v.string(),
     slug: v.string(),
@@ -85,6 +91,7 @@ export const updateArticle = mutation({
     keywords: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    await requireAdmin(args.sessionToken);
     const existing = await ctx.db
       .query("articles")
       .withIndex("by_slug", (q) => q.eq("slug", args.slug))
@@ -111,8 +118,9 @@ export const updateArticle = mutation({
 });
 
 export const deleteArticle = mutation({
-  args: { id: v.id("articles") },
+  args: { sessionToken: v.string(), id: v.id("articles") },
   handler: async (ctx, args) => {
+    await requireAdmin(args.sessionToken);
     await ctx.db.delete(args.id);
     return { success: true, error: undefined };
   },

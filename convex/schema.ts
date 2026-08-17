@@ -74,4 +74,10 @@ export default defineSchema({
     maintenanceImageUrl: v.optional(v.string()),
     automationImageUrl: v.optional(v.string()),
   }),
+
+  loginAttempts: defineTable({
+    ipOrEmail: v.string(),
+    attempts: v.number(),
+    lastAttemptAt: v.number(),
+  }).index("by_ipOrEmail", ["ipOrEmail"]),
 });

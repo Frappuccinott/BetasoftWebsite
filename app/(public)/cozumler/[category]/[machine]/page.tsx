@@ -62,6 +62,7 @@ export default async function MachineShowcasePage({
     "name": machine.name,
     "image": machine.imageUrls || [],
     "description": machine.metaDescription || machine.description,
+    "url": `${process.env.NEXT_PUBLIC_SITE_URL}/cozumler/${machine.categorySlug}/${machine.slug}`,
     "brand": {
       "@type": "Brand",
       "name": "Betasoft"

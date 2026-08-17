@@ -13,13 +13,12 @@ import { ImageUploader } from "@/components/admin/ImageUploader";
 import { MarkdownEditor } from "@/components/admin/MarkdownEditor";
 import { SeoFormFields } from "@/components/admin/SeoFormFields";
 import { toast } from "sonner";
-import { useMutation } from "convex/react";
+import { createArticle as createArticleAction } from "@/actions/admin/articles";
 import { api } from "@/convex/_generated/api";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 
 export default function NewArticlePage() {
   const router = useRouter();
-  const createArticle = useMutation(api.articles.createArticle);
   
   // Form States
   const [title, setTitle] = useState("");
@@ -50,7 +49,7 @@ export default function NewArticlePage() {
       const { slugify } = await import("@/lib/utils");
       const slug = slugify(title);
       
-      const result = await createArticle({
+      const result = await createArticleAction({
         title,
         slug,
         content,

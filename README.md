@@ -63,7 +63,7 @@ NEXT_PUBLIC_CONVEX_URL=your_convex_url
 # Yönetici (Admin) Giriş Bilgileri
 ADMIN_EMAIL=your_admin_email
 ADMIN_PASSWORD=your_admin_password
-JWT_SECRET=your_super_secret_jwt_key
+SESSION_SECRET=your_super_secret_session_key
 
 # Cloudflare R2 Depolama
 CLOUDFLARE_ACCOUNT_ID=your_cloudflare_id

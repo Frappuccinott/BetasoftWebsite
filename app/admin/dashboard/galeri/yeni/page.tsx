@@ -12,14 +12,12 @@ import { ImageUploader } from "@/components/admin/ImageUploader";
 import { MultiImageUploader } from "@/components/admin/MultiImageUploader";
 import { toast } from "sonner";
 
-import { useMutation } from "convex/react";
+import { createGallery as createGalleryAction } from "@/actions/admin/galleries";
 import { api } from "@/convex/_generated/api";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 
 export default function NewGalleryPage() {
   const router = useRouter();
-  
-  const createGallery = useMutation(api.galleries.createGallery);
   
   // Form States
   const [title, setTitle] = useState("");
@@ -40,7 +38,7 @@ export default function NewGalleryPage() {
     setIsSubmitting(true);
     
     try {
-      const result = await createGallery({
+      const result = await createGalleryAction({
         title,
         coverImage,
         images,

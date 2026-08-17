@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { requireAdmin } from "./auth";
 
 export const getCategories = query({
   args: {},
@@ -20,6 +21,7 @@ export const getCategoryBySlug = query({
 
 export const createCategory = mutation({
   args: {
+    sessionToken: v.string(),
     name: v.string(),
     slug: v.string(),
     imageUrl: v.union(v.string(), v.null()),
@@ -28,6 +30,7 @@ export const createCategory = mutation({
     keywords: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    await requireAdmin(args.sessionToken);
     const existing = await ctx.db
       .query("categories")
       .withIndex("by_slug", (q) => q.eq("slug", args.slug))
@@ -51,8 +54,9 @@ export const createCategory = mutation({
 });
 
 export const deleteCategory = mutation({
-  args: { id: v.id("categories") },
+  args: { sessionToken: v.string(), id: v.id("categories") },
   handler: async (ctx, args) => {
+    await requireAdmin(args.sessionToken);
     const machines = await ctx.db
       .query("machines")
       .withIndex("by_category", (q) => q.eq("categoryId", args.id))
@@ -76,6 +80,7 @@ export const getCategoryById = query({
 
 export const updateCategory = mutation({
   args: {
+    sessionToken: v.string(),
     id: v.id("categories"),
     name: v.string(),
     slug: v.string(),
@@ -85,6 +90,7 @@ export const updateCategory = mutation({
     keywords: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    await requireAdmin(args.sessionToken);
     const existing = await ctx.db
       .query("categories")
       .withIndex("by_slug", (q) => q.eq("slug", args.slug))

@@ -3,8 +3,23 @@
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { r2Client } from "@/lib/r2";
+import { cookies } from "next/headers";
+import { decrypt } from "@/lib/auth";
+
+async function requireAuth() {
+  const cookieStore = await cookies();
+  const sessionToken = cookieStore.get("admin_session")?.value;
+  if (!sessionToken) return false;
+  const payload = await decrypt(sessionToken);
+  return payload !== null;
+}
 
 export async function getPresignedUploadUrl(fileName: string, contentType: string, folder?: string) {
+  const isAuth = await requireAuth();
+  if (!isAuth) {
+    return { success: false, error: "Unauthorized" };
+  }
+
   const bucketName = process.env.R2_BUCKET_NAME;
 
   if (!bucketName) {
@@ -46,6 +61,11 @@ export async function getPresignedUploadUrl(fileName: string, contentType: strin
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 
 export async function deleteImageFromR2(fileKey: string) {
+  const isAuth = await requireAuth();
+  if (!isAuth) {
+    return { success: false, error: "Unauthorized" };
+  }
+
   const bucketName = process.env.R2_BUCKET_NAME;
 
   if (!bucketName) {

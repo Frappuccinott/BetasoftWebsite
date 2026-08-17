@@ -11,14 +11,14 @@ import { ImageUploader } from "@/components/admin/ImageUploader";
 import { SimpleMarkdownEditor } from "@/components/admin/SimpleMarkdownEditor";
 import { SeoFormFields } from "@/components/admin/SeoFormFields";
 import { toast } from "sonner";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { updateSettings as updateSettingsAction } from "@/actions/admin/settings";
 import { deleteImageFromR2 } from "@/actions/r2";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 
 export default function SettingsPage() {
   const settings = useQuery(api.settings.getSettings);
-  const updateSettings = useMutation(api.settings.updateSettings);
 
   const [formData, setFormData] = useState({
     siteName: "",
@@ -127,7 +127,7 @@ export default function SettingsPage() {
     setIsSubmitting(true);
 
     try {
-      const result = await updateSettings(formData);
+      const result = await updateSettingsAction(formData);
       if (result.success) {
         toast.success("Ayarlar başarıyla güncellendi!");
         setIsInitialized(false); // Yeniden yükleme kontrolü için

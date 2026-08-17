@@ -11,8 +11,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import { SeoFormFields } from "@/components/admin/SeoFormFields";
 import { toast } from "sonner";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { updateCategory as updateCategoryAction } from "@/actions/admin/categories";
 import { Id } from "@/convex/_generated/dataModel";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 
@@ -22,7 +23,6 @@ export default function EditCategoryPage() {
   const categoryId = params.id as Id<"categories">;
 
   const category = useQuery(api.categories.getCategoryById, { id: categoryId });
-  const updateCategory = useMutation(api.categories.updateCategory);
   
   // Form States
   const [name, setName] = useState("");
@@ -73,7 +73,7 @@ export default function EditCategoryPage() {
       const { slugify } = await import("@/lib/utils");
       const slug = slugify(name);
       
-      const result = await updateCategory({
+      const result = await updateCategoryAction({
         id: categoryId,
         name,
         slug,

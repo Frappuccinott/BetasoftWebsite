@@ -14,8 +14,9 @@ import { MultiImageUploader } from "@/components/admin/MultiImageUploader";
 import { SeoFormFields } from "@/components/admin/SeoFormFields";
 import { toast } from "sonner";
 
-import { useQuery, useMutation } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { updateMachine as updateMachineAction } from "@/actions/admin/machines";
 import { Id } from "@/convex/_generated/dataModel";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 
@@ -26,7 +27,6 @@ export default function EditMachinePage() {
   
   const categories = useQuery(api.categories.getCategories);
   const machine = useQuery(api.machines.getMachineById, { id: machineId });
-  const updateMachine = useMutation(api.machines.updateMachine);
   
   // Form States
   const [name, setName] = useState("");
@@ -111,7 +111,7 @@ export default function EditMachinePage() {
       const { slugify } = await import("@/lib/utils");
       const slug = slugify(name);
       
-      const result = await updateMachine({
+      const result = await updateMachineAction({
         id: machineId,
         name,
         slug,
