@@ -1,5 +1,11 @@
 import Link from "next/link";
 import { ChevronRight, Wrench, Settings, Cpu } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Servis ve Teknik Destek",
+  description: "Betasoft Otomasyon Sistemleri satış sonrası servis ve teknik destek hizmetleri. Kurulum, periyodik bakım ve otomasyon çözümlerimizle yanınızdayız.",
+};
 
 export default function ServicesPage() {
   return (

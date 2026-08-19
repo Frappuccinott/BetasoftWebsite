@@ -38,6 +38,24 @@ const serviceData: Record<string, { title: string; desc: string; icon: any; cont
   }
 };
 
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ type: string }>;
+}): Promise<Metadata> {
+  const resolvedParams = await params;
+  const data = serviceData[resolvedParams.type];
+  
+  if (!data) return {};
+
+  return {
+    title: `${data.title} - Servis`,
+    description: data.desc,
+  };
+}
+
 export default async function ServiceDetailPage({
   params,
 }: {
