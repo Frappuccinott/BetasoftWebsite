@@ -1,6 +1,12 @@
 import { Phone, Mail, MapPin } from "lucide-react";
 import { fetchQuery } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Bizimle İletişime Geçin",
+  description: "Betasoft Otomasyon Sistemleri iletişim bilgileri. Sorularınız, teklif talepleriniz ve teknik destek için telefon, e-posta veya adresimizden bize ulaşın.",
+};
 
 export default async function IletisimPage() {
   let settings;
