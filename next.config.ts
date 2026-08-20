@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "pub-b23099a950b44f8a98893aa3b5131fe2.r2.dev",
       },
+      {
+        protocol: "https",
+        hostname: "cdn.betasoftotomasyon.com",
+      },
     ],
   },
   async headers() {
