@@ -88,7 +88,7 @@ export function HeroSection() {
       {/* Content */}
       <div className="container mx-auto px-4 relative z-20 pointer-events-none">
         <div className="max-w-3xl pointer-events-auto">
-          <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-6 drop-shadow-md">
+          <h1 className="hidden md:block text-4xl md:text-6xl font-bold text-white leading-tight mb-6 drop-shadow-md">
             Endüstriyel Üretimde <br />
             <span className="text-primary">Geleceğin Teknolojisi</span>
           </h1>

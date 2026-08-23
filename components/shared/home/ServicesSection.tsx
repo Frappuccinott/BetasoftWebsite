@@ -18,8 +18,8 @@ export function ServicesSection({
           style={servicesImageUrl ? { backgroundImage: `url(${servicesImageUrl})` } : {}}
         />
 
-        {/* Gray Overlay that disappears on hover */}
-        <div className="absolute inset-0 bg-zinc-600/80 mix-blend-multiply transition-opacity duration-500 ease-in-out group-hover:opacity-0" />
+        {/* Gray Overlay that disappears on hover (hidden on mobile) */}
+        <div className="hidden md:block absolute inset-0 bg-zinc-600/80 mix-blend-multiply transition-opacity duration-500 ease-in-out group-hover:opacity-0" />
 
         {/* Bottom Gradient to ensure text readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80" />
@@ -45,8 +45,8 @@ export function ServicesSection({
           style={worksImageUrl ? { backgroundImage: `url(${worksImageUrl})` } : {}}
         />
 
-        {/* Gray Overlay that disappears on hover */}
-        <div className="absolute inset-0 bg-zinc-600/80 mix-blend-multiply transition-opacity duration-500 ease-in-out group-hover:opacity-0" />
+        {/* Gray Overlay that disappears on hover (hidden on mobile) */}
+        <div className="hidden md:block absolute inset-0 bg-zinc-600/80 mix-blend-multiply transition-opacity duration-500 ease-in-out group-hover:opacity-0" />
 
         {/* Bottom Gradient to ensure text readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80" />

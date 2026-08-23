@@ -193,7 +193,13 @@ export function Navbar({ settings }: { settings?: any }) {
                     <AccordionContent className="px-6 pb-4 pt-2 bg-zinc-100/50">
                       {sectoralSolutions.map((sol) => (
                         <div key={sol.id} className="mb-4 last:mb-0">
-                          <div className="font-bold text-zinc-900 mb-2 uppercase text-xs">{sol.title}</div>
+                          <Link 
+                            href={`/cozumler/${sol.id}`}
+                            onClick={() => setIsOpen(false)}
+                            className="font-bold text-zinc-900 mb-2 uppercase text-xs block hover:text-primary transition-colors"
+                          >
+                            {sol.title}
+                          </Link>
                           <div className="flex flex-col space-y-2 pl-2">
                             {sol.items.map(item => {
                               return (
