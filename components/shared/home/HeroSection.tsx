@@ -92,10 +92,10 @@ export function HeroSection() {
             Endüstriyel Üretimde <br />
             <span className="text-primary">Geleceğin Teknolojisi</span>
           </h1>
-          <p className="text-lg md:text-xl text-zinc-300 mb-8 max-w-2xl drop-shadow-md">
+          <p className="hidden md:block text-lg md:text-xl text-zinc-300 mb-8 max-w-2xl drop-shadow-md">
             Sektörünüze özel yenilikçi makine çözümleri ve tam kapsamlı otomasyon sistemleri ile üretim hattınızı bir üst seviyeye taşıyın.
           </p>
-          <div className="flex flex-wrap gap-4">
+          <div className="hidden md:flex flex-wrap gap-4">
             <Link
               href="/cozumler"
               className="inline-flex items-center gap-2 bg-primary text-white font-medium px-6 py-3 rounded-md hover:bg-primary/90 transition-all shadow-lg"
