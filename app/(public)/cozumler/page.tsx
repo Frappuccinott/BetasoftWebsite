@@ -14,9 +14,14 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = "Sektörel Çözümlerimiz & Makinelerimiz";
   const description = "Farklı endüstrilerin zorlu ihtiyaçlarına yönelik, yüksek verimli ve yenilikçi makine üretim çözümleri sunuyoruz.";
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+
   return {
     title,
     description,
+    alternates: {
+      canonical: `${siteUrl}/cozumler`,
+    },
     openGraph: {
       title: `${title} | ${settings?.metaTitle || settings?.siteName || "Betasoft"}`,
       description,

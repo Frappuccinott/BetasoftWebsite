@@ -24,10 +24,15 @@ export async function generateMetadata(
   const description = machine.metaDescription || machine.description.substring(0, 150).replace(/\n/g, ' ') + '...';
   const siteName = settings?.metaTitle || settings?.siteName || "Betasoft";
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+
   return {
     title,
     description,
     keywords: machine.keywords ? machine.keywords.split(',').map((k: string) => k.trim()) : undefined,
+    alternates: {
+      canonical: `${siteUrl}/cozumler/${machine.categorySlug}/${machine.slug}`,
+    },
     openGraph: {
       title: `${title} | ${siteName}`,
       description,

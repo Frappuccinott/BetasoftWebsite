@@ -24,10 +24,15 @@ export async function generateMetadata(
   const description = category.metaDescription || `Üretim süreçlerinizi hızlandıran, verimliliği artıran ve tamamen ihtiyaçlarınıza yönelik olarak tasarlanan ${category.name.toLowerCase()} çözümlerimiz.`;
   const siteName = settings?.metaTitle || settings?.siteName || "Betasoft";
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+
   return {
     title,
     description,
     keywords: category.keywords ? category.keywords.split(',').map((k: string) => k.trim()) : undefined,
+    alternates: {
+      canonical: `${siteUrl}/cozumler/${category.slug}`,
+    },
     openGraph: {
       title: `${title} | ${siteName}`,
       description,

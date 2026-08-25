@@ -95,30 +95,10 @@ export function Footer({ settings }: { settings?: any }) {
             </ul>
           </div>
 
-          {/* Newsletter */}
-          <div>
-            <h3 className="font-semibold text-lg text-white mb-4">Bültene Kayıt Olun</h3>
-            <p className="text-white/80 text-sm mb-4">
-              Yeni ürünlerimizden ve sektörel haberlerden ilk siz haberdar olun.
-            </p>
-            <form className="flex flex-col gap-2">
-              <input 
-                type="email" 
-                placeholder="E-posta adresiniz" 
-                className="bg-white/10 border border-white/20 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-primary"
-              />
-              <button 
-                type="button"
-                className="bg-primary text-white text-sm font-medium py-2 rounded hover:bg-primary/90 transition-colors"
-              >
-                Kayıt Ol
-              </button>
-            </form>
-          </div>
         </div>
 
         <div className="border-t border-white/20 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/60">
-          <p>© {new Date().getFullYear()} {siteName}. Tüm hakları saklıdır.</p>
+          <p>© 2023 {siteName}. Tüm hakları saklıdır.</p>
           <div className="flex gap-4">
             <Link href="/gizlilik" className="hover:text-white">Gizlilik Politikası</Link>
             <Link href="/cerezler" className="hover:text-white">Çerez Politikası</Link>

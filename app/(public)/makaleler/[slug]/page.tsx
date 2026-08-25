@@ -27,10 +27,15 @@ export async function generateMetadata(
   const description = article.metaDescription || article.content.substring(0, 150).replace(/\n/g, ' ') + '...';
   const siteName = settings?.metaTitle || settings?.siteName || "Betasoft";
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+
   return {
     title,
     description,
     keywords: article.keywords ? article.keywords.split(',').map((k: string) => k.trim()) : undefined,
+    alternates: {
+      canonical: `${siteUrl}/makaleler/${article.slug}`,
+    },
     openGraph: {
       title: `${title} | ${siteName}`,
       description,

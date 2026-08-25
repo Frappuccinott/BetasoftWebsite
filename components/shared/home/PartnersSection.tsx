@@ -38,7 +38,7 @@ export function PartnersSection({
               <img 
                 src={partner.imageUrl} 
                 alt={partner.name}
-                className="w-full h-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
+                className="w-full h-full object-contain transition-all duration-300"
               />
             </div>
           ))}
